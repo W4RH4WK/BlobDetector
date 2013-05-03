@@ -4,9 +4,6 @@
 package at.bluephoenix.BlobDetector;
 
 // java stuff
-import java.util.ArrayList;
-import java.util.List;
-
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;

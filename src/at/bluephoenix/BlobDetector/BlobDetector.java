@@ -18,8 +18,9 @@ import android.view.MotionEvent;
 
 public class BlobDetector {
 
-    public static final Integer defaultAreaThreshold = 1000;
-    public static final Scalar defaultColorTolerance = new Scalar(5, 40, 40);
+    private static final Integer defaultAreaThreshold = 1000;
+    private static final Scalar defaultColorTolerance = new Scalar(5, 40, 40);
+    private static final Double fov = 80.0;
 
     /**
      * wrapper for findBlobs using defaultAreaThreshold and
@@ -232,4 +233,20 @@ public class BlobDetector {
 
         return ret;
     }
+
+    /**
+     * calculate angle of a given point in the real world.
+     * 
+     * @param src
+     *            source point with ego centric coords
+     * @param width
+     *            display width in pixel
+     * 
+     * @return angle relative to display center (- left / + right)
+     */
+    public static Double calcAngle(Point src, int width) {
+        double fact = fov / ((double) width);
+        return src.x * fact - (fov / 2);
+    }
+
 }

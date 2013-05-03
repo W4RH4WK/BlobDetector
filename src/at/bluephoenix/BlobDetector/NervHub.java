@@ -14,7 +14,9 @@ public class NervHub {
     }
 
     public void setImage(Mat image) {
-        this.image = image;
+        synchronized (this.image) {
+            this.image = image;
+        }
     }
 
     private Scalar targetColor = new Scalar(0, 100, 100);
@@ -24,7 +26,9 @@ public class NervHub {
     }
 
     public void setTargetColor(Scalar targetColor) {
-        this.targetColor = targetColor;
+        synchronized (this.targetColor) {
+            this.targetColor = targetColor;
+        }
     }
 
     private List<Blob> blobs = null;
@@ -34,7 +38,9 @@ public class NervHub {
     }
 
     public void setBlobs(List<Blob> blobs) {
-        this.blobs = blobs;
+        synchronized (this.blobs) {
+            this.blobs = blobs;
+        }
     }
 
     private Mat homography = null;
@@ -44,6 +50,20 @@ public class NervHub {
     }
 
     public void setHomography(Mat homography) {
-        this.homography = homography;
+        synchronized (this.homography) {
+            this.homography = homography;   
+        }
+    }
+    
+    private Blob targetBlob = null;
+
+    public Blob getTargetBlob() {
+        return targetBlob;
+    }
+
+    public void setTargetBlob(Blob targetBlob) {
+        synchronized (this.targetBlob) {
+            this.targetBlob = targetBlob;   
+        }
     }
 }
