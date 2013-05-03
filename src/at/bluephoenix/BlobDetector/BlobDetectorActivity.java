@@ -46,7 +46,7 @@ public class BlobDetectorActivity extends Activity implements OnTouchListener,
 
     public BlobDetectorActivity() {
         Log.i(TAG, "Instantiated new" + this.getClass());
-        data = new NervHub();
+        data = NervHub.getInstance();
     }
 
     @Override

@@ -66,4 +66,11 @@ public class NervHub {
             this.targetBlob = targetBlob;   
         }
     }
+
+    private final static NervHub instance = new NervHub();
+    
+    public static NervHub getInstance() {
+        return instance;
+    }
+
 }
