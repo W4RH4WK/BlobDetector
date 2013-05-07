@@ -20,7 +20,7 @@ public class BlobDetector {
 
     private static final Integer defaultAreaThreshold = 1000;
     private static final Scalar defaultColorTolerance = new Scalar(5, 40, 40);
-    private static final Double fov = 80.0;
+    private static final Double fov = 47.5;
 
     /**
      * wrapper for findBlobs using defaultAreaThreshold and
@@ -174,7 +174,7 @@ public class BlobDetector {
 
         try {
             // change this color vectors according to your lightning
-            red = findBlobs(rgbaFrame, new Scalar(8, 136, 136), 100,
+            red = findBlobs(rgbaFrame, new Scalar(8, 214, 186), 100,
                     new Scalar(15, 100, 100)).get(0);
             green = findBlobs(rgbaFrame, new Scalar(102, 181, 74), 100,
                     new Scalar(15, 100, 100)).get(0);

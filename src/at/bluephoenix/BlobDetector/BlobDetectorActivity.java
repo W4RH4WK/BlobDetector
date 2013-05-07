@@ -157,9 +157,8 @@ public class BlobDetectorActivity extends Activity implements OnTouchListener,
                 Point p = BlobDetector.displayToWorld(data.getBlobs().get(0)
                         .getContact(), data.getHomography());
                 String sz = String.format("[ %3.2f %3.2f ]", p.x, p.y);
-                Core.putText(frame, sz, new Point(
-                        20, 80), Core.FONT_HERSHEY_PLAIN, 1, new Scalar(255, 0,
-                        0));
+                Core.putText(frame, sz, new Point(20, 80),
+                        Core.FONT_HERSHEY_PLAIN, 1, new Scalar(255, 0, 0));
             } catch (IndexOutOfBoundsException e) {
                 // ignore
             }

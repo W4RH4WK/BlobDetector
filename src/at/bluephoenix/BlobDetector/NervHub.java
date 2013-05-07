@@ -13,10 +13,8 @@ public class NervHub {
         return image;
     }
 
-    public void setImage(Mat image) {
-        synchronized (this.image) {
-            this.image = image;
-        }
+    public synchronized void setImage(Mat image) {
+        this.image = image;
     }
 
     private Scalar targetColor = new Scalar(0, 100, 100);
@@ -25,10 +23,8 @@ public class NervHub {
         return targetColor;
     }
 
-    public void setTargetColor(Scalar targetColor) {
-        synchronized (this.targetColor) {
-            this.targetColor = targetColor;
-        }
+    public synchronized void setTargetColor(Scalar targetColor) {
+        this.targetColor = targetColor;
     }
 
     private List<Blob> blobs = null;
@@ -37,10 +33,8 @@ public class NervHub {
         return blobs;
     }
 
-    public void setBlobs(List<Blob> blobs) {
-        synchronized (this.blobs) {
-            this.blobs = blobs;
-        }
+    public synchronized void setBlobs(List<Blob> blobs) {
+        this.blobs = blobs;
     }
 
     private Mat homography = null;
@@ -49,28 +43,23 @@ public class NervHub {
         return homography;
     }
 
-    public void setHomography(Mat homography) {
-        synchronized (this.homography) {
-            this.homography = homography;   
-        }
+    public synchronized void setHomography(Mat homography) {
+        this.homography = homography;
     }
-    
+
     private Blob targetBlob = null;
 
     public Blob getTargetBlob() {
         return targetBlob;
     }
 
-    public void setTargetBlob(Blob targetBlob) {
-        synchronized (this.targetBlob) {
-            this.targetBlob = targetBlob;   
-        }
+    public synchronized void setTargetBlob(Blob targetBlob) {
+        this.targetBlob = targetBlob;
     }
 
     private final static NervHub instance = new NervHub();
-    
+
     public static NervHub getInstance() {
         return instance;
     }
-
 }
