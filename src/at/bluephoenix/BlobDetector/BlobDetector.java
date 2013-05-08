@@ -20,7 +20,23 @@ public class BlobDetector {
 
     private static final Integer defaultAreaThreshold = 1000;
     private static final Scalar defaultColorTolerance = new Scalar(5, 40, 40);
+    private static final Scalar calibrationColorTolerance = new Scalar(15, 100,
+            100);
     private static final Double fov = 47.5;
+
+    /*
+     * Following parameters are used for the calibration process. color defines
+     * the HSV vector for the according color blob pos holds to postion in real
+     * world and are used to calculate the homography matrix
+     */
+    private static final Scalar colorRed = new Scalar(8, 214, 186);
+    private static final Scalar colorGreen = new Scalar(102, 181, 74);
+    private static final Scalar colorBlue = new Scalar(150, 255, 75);
+    private static final Scalar colorYellow = new Scalar(30, 230, 161);
+    private static final Point posYellow = new Point(-8.6, 32.0);
+    private static final Point posBlue = new Point(-5.3, 19.4);
+    private static final Point posRed = new Point(1.4, 29.5);
+    private static final Point posGreen = new Point(9.1, 22.5);
 
     /**
      * wrapper for findBlobs using defaultAreaThreshold and
@@ -173,15 +189,14 @@ public class BlobDetector {
         Blob yellow;
 
         try {
-            // change this color vectors according to your lightning
-            red = findBlobs(rgbaFrame, new Scalar(8, 214, 186), 100,
-                    new Scalar(15, 100, 100)).get(0);
-            green = findBlobs(rgbaFrame, new Scalar(102, 181, 74), 100,
-                    new Scalar(15, 100, 100)).get(0);
-            blue = findBlobs(rgbaFrame, new Scalar(150, 255, 75), 100,
-                    new Scalar(15, 100, 100)).get(0);
-            yellow = findBlobs(rgbaFrame, new Scalar(30, 230, 161), 100,
-                    new Scalar(15, 100, 100)).get(0);
+            red = findBlobs(rgbaFrame, colorRed, 100, calibrationColorTolerance)
+                    .get(0);
+            green = findBlobs(rgbaFrame, colorGreen, 100,
+                    calibrationColorTolerance).get(0);
+            blue = findBlobs(rgbaFrame, colorBlue, 100,
+                    calibrationColorTolerance).get(0);
+            yellow = findBlobs(rgbaFrame, colorYellow, 100,
+                    calibrationColorTolerance).get(0);
         } catch (IndexOutOfBoundsException e) {
             return null;
         }
@@ -189,18 +204,13 @@ public class BlobDetector {
         Point[] pixels = { yellow.getCenter(), blue.getCenter(),
                 red.getCenter(), green.getCenter(), };
 
-        Point[] blobs = { new Point(-8.6, 32.0), // pos yellow
-                new Point(-5.3, 19.4), // pos blue
-                new Point(1.4, 29.5), // pos red
-                new Point(9.1, 22.5) // pos green
-        };
+        Point[] blobs = { posYellow, posBlue, posRed, posGreen };
 
         MatOfPoint2f src = new MatOfPoint2f();
         MatOfPoint2f dst = new MatOfPoint2f();
         src.fromArray(pixels);
         dst.fromArray(blobs);
 
-        // Mat h = Calib3d.findHomography(src, dst);
         Mat h = Imgproc.getPerspectiveTransform(src, dst);
 
         src.release();
