@@ -5,21 +5,21 @@ import org.opencv.core.Point;
 public class CaptureBall extends FiniteStateMachine {
     private enum State {
         Scan {
-            @SuppressWarnings("finally")
             public State run() {
                 NervHub data = NervHub.getInstance();
+                Blob b = null;
                 
                 try {
-                    Blob b = data.getBlobs().get(0);
-
-                    // check for minimum area
-                    if (b.getArea() >= 1000)
-                        data.setTargetBlob(b);
-
-                    return Advance;
+                    b = data.getBlobs().get(0);
                 } catch (IndexOutOfBoundsException e) {
-                    // ignore
-                } finally {
+                    return Rotate;
+                }
+                
+                // check for minimum area
+                if (b.getArea() >= 1000) {
+                    data.setTargetBlob(b);
+                    return Advance;
+                } else {
                     return Rotate;
                 }
             }
