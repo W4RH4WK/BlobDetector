@@ -8,6 +8,9 @@ import org.opencv.core.Scalar;
 public class NervHub {
 
     // ------------------------------------------------------------ IMAGE
+    /**
+     * this member holds the current rgba image matrix.
+     */
     private Mat image = null;
 
     public Mat getImage() {
@@ -19,6 +22,9 @@ public class NervHub {
     }
 
     // ------------------------------------------------------------ TARGET COLOR
+    /**
+     * this member holds the hsv color vector of the desired target.
+     */
     private Scalar targetColor = new Scalar(0, 100, 100);
 
     public Scalar getTargetColor() {
@@ -30,6 +36,9 @@ public class NervHub {
     }
 
     // ------------------------------------------------------------ BLOBS
+    /**
+     * this list contains all found blobs sorted from biggest to smallest.
+     */
     private List<Blob> blobs = null;
 
     public List<Blob> getBlobs() {
@@ -41,6 +50,9 @@ public class NervHub {
     }
 
     // ------------------------------------------------------------ HOMOGRAPHY
+    /**
+     * this member contains the homography matrix.
+     */
     private Mat homography = null;
 
     public Mat getHomography() {
@@ -52,6 +64,9 @@ public class NervHub {
     }
 
     // ------------------------------------------------------------ TARGET BLOB
+    /**
+     * this member is a reference to his target.
+     */
     private Blob targetBlob = null;
 
     public Blob getTargetBlob() {
@@ -63,6 +78,9 @@ public class NervHub {
     }
 
     // ------------------------------------------------------------ DIRECTION
+    /**
+     * this member is used to determine the robots desired movement.
+     */
     private Direction direction;
 
     public Direction getDirection() {
