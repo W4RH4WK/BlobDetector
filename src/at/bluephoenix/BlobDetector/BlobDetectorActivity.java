@@ -1,6 +1,3 @@
-// Alex Hirsch
-// (c) 2013 | UIBK
-
 package at.bluephoenix.BlobDetector;
 
 // java stuff
