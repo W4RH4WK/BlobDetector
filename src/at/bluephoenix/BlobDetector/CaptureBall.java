@@ -82,4 +82,12 @@ public class CaptureBall extends FiniteStateMachine {
     public boolean isFinished() {
         return state.equals(State.End);
     }
+
+    @Override
+    public void run() {
+        CaptureBall cb = new CaptureBall();
+        
+        while (!cb.isFinished())
+            cb.exec();
+    }
 }
