@@ -2,19 +2,21 @@ package at.bluephoenix.BlobDetector;
 
 import org.opencv.core.Point;
 
+import android.util.Log;
+
 public class CaptureBall extends FiniteStateMachine {
     private enum State {
         Scan {
             public State run() {
                 NervHub data = NervHub.getInstance();
                 Blob b = null;
-                
+
                 try {
                     b = data.getBlobs().get(0);
                 } catch (IndexOutOfBoundsException e) {
                     return Rotate;
                 }
-                
+
                 // check for minimum area
                 if (b.getArea() >= 1000) {
                     data.setTargetBlob(b);
@@ -33,9 +35,11 @@ public class CaptureBall extends FiniteStateMachine {
         Advance {
             public State run() {
                 NervHub data = NervHub.getInstance();
-                
+
                 Double targetAngle = BlobDetector.calcAngle(data
                         .getTargetBlob().getCenter(), data.getImage().width());
+
+                Log.i(BlobDetector.TAG, "Cb: target angle " + targetAngle);
 
                 // TODO rotate robot until target is in center
 
@@ -43,6 +47,8 @@ public class CaptureBall extends FiniteStateMachine {
                         .getContact(), data.getHomography());
                 Double targetDist = Math.sqrt(target.x * target.x + target.y
                         * target.y);
+
+                Log.i(BlobDetector.TAG, "Cb: target distance" + targetDist);
 
                 // TODO move forward
 
@@ -76,6 +82,7 @@ public class CaptureBall extends FiniteStateMachine {
     @Override
     public void exec() {
         state = state.run();
+        Log.i(BlobDetector.TAG, "Cb: " + state);
     }
 
     @Override
@@ -86,7 +93,7 @@ public class CaptureBall extends FiniteStateMachine {
     @Override
     public void run() {
         CaptureBall cb = new CaptureBall();
-        
+
         while (!cb.isFinished())
             cb.exec();
     }
