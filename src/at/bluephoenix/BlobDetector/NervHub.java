@@ -7,6 +7,7 @@ import org.opencv.core.Scalar;
 
 public class NervHub {
 
+    // ------------------------------------------------------------ IMAGE
     private Mat image = null;
 
     public Mat getImage() {
@@ -17,6 +18,7 @@ public class NervHub {
         this.image = image;
     }
 
+    // ------------------------------------------------------------ TARGET COLOR
     private Scalar targetColor = new Scalar(0, 100, 100);
 
     public Scalar getTargetColor() {
@@ -27,6 +29,7 @@ public class NervHub {
         this.targetColor = targetColor;
     }
 
+    // ------------------------------------------------------------ BLOBS
     private List<Blob> blobs = null;
 
     public List<Blob> getBlobs() {
@@ -37,6 +40,7 @@ public class NervHub {
         this.blobs = blobs;
     }
 
+    // ------------------------------------------------------------ HOMOGRAPHY
     private Mat homography = null;
 
     public Mat getHomography() {
@@ -47,6 +51,7 @@ public class NervHub {
         this.homography = homography;
     }
 
+    // ------------------------------------------------------------ TARGET BLOB
     private Blob targetBlob = null;
 
     public Blob getTargetBlob() {
@@ -57,6 +62,18 @@ public class NervHub {
         this.targetBlob = targetBlob;
     }
 
+    // ------------------------------------------------------------ DIRECTION
+    private Direction direction;
+
+    public Direction getDirection() {
+        return direction;
+    }
+
+    public void setDirection(Direction direction) {
+        this.direction = direction;
+    }
+
+    // ------------------------------------------------------------ SINGELTON
     private final static NervHub instance = new NervHub();
 
     public static NervHub getInstance() {
