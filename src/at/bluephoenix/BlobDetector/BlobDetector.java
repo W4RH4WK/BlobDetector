@@ -18,6 +18,9 @@ import android.view.MotionEvent;
 
 public class BlobDetector {
 
+    // TAG for debug messages
+    public static final String TAG = "BlobDetector";
+
     private static final Integer defaultAreaThreshold = 1000;
     private static final Scalar defaultColorTolerance = new Scalar(5, 40, 40);
     private static final Scalar calibrationColorTolerance = new Scalar(15, 100,

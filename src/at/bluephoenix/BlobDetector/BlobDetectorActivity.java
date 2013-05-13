@@ -32,9 +32,6 @@ import android.view.WindowManager;
 public class BlobDetectorActivity extends Activity implements OnTouchListener,
         CvCameraViewListener2 {
 
-    // TAG for debug messages
-    private static final String TAG = "BlobDetector";
-
     // information hub
     private NervHub data;
 
@@ -45,7 +42,7 @@ public class BlobDetectorActivity extends Activity implements OnTouchListener,
     private MenuItem mCalibrate;
 
     public BlobDetectorActivity() {
-        Log.i(TAG, "Instantiated new" + this.getClass());
+        Log.i(BlobDetector.TAG, "Instantiated new" + this.getClass());
         data = NervHub.getInstance();
     }
 
@@ -82,31 +79,31 @@ public class BlobDetectorActivity extends Activity implements OnTouchListener,
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        Log.i(TAG, "called onCreateOptionsMenu");
+        Log.i(BlobDetector.TAG, "called onCreateOptionsMenu");
         mCalibrate = menu.add("Calibrate");
         return true;
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
-        Log.i(TAG, "called onOptionsItemSelected; selected item: " + item);
+        Log.i(BlobDetector.TAG, "called onOptionsItemSelected; selected item: " + item);
         if (item == mCalibrate) {
-            Log.i(TAG, "calibrating camera");
+            Log.i(BlobDetector.TAG, "calibrating camera");
             data.setHomography(BlobDetector.calibrateCamera(data.getImage()));
             if (data.getHomography() == null)
-                Log.w(TAG, "calibration not successful");
+                Log.w(BlobDetector.TAG, "calibration not successful");
         }
         return true;
     }
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        Log.d(TAG, "touch event invoke");
+        Log.d(BlobDetector.TAG, "touch event invoke");
 
         data.setTargetColor(BlobDetector.findTouchedColor(data.getImage(),
                 event, mOpenCvCameraView.getWidth(),
                 mOpenCvCameraView.getHeight()));
 
-        Log.i(TAG, "new targetcolor = " + data.getTargetColor().toString());
+        Log.i(BlobDetector.TAG, "new targetcolor = " + data.getTargetColor().toString());
 
         // skip subsequent touch events
         return false;
@@ -172,7 +169,7 @@ public class BlobDetectorActivity extends Activity implements OnTouchListener,
         public void onManagerConnected(int status) {
             switch (status) {
             case LoaderCallbackInterface.SUCCESS:
-                Log.i(TAG, "OpenCV loaded successfully");
+                Log.i(BlobDetector.TAG, "OpenCV loaded successfully");
                 mOpenCvCameraView.enableView();
                 mOpenCvCameraView.setOnTouchListener(BlobDetectorActivity.this);
                 break;
