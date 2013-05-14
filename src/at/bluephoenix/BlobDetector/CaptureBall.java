@@ -41,7 +41,13 @@ public class CaptureBall extends FiniteStateMachine {
 
                 Log.i(BlobDetector.TAG, "Cb: target angle " + targetAngle);
 
-                // TODO rotate robot until target is in center
+                if (targetAngle < -5) {
+                    data.setDirection(Direction.Left);
+                    return Advance;
+                } else if (targetAngle > 5) {
+                    data.setDirection(Direction.Right);
+                    return Advance;
+                }
 
                 Point target = BlobDetector.displayToWorld(data.getTargetBlob()
                         .getContact(), data.getHomography());
@@ -50,9 +56,12 @@ public class CaptureBall extends FiniteStateMachine {
 
                 Log.i(BlobDetector.TAG, "Cb: target distance" + targetDist);
 
-                // TODO move forward
-
-                return Capture;
+                if (targetDist > 20) {
+                    data.setDirection(Direction.Forward);
+                    return Advance;
+                } else {
+                    return Capture;
+                }
             }
         },
         Capture {
@@ -94,7 +103,14 @@ public class CaptureBall extends FiniteStateMachine {
     public void run() {
         CaptureBall cb = new CaptureBall();
 
-        while (!cb.isFinished())
+        while (!cb.isFinished()) {
             cb.exec();
+            
+            try {
+                Thread.sleep(20);
+            } catch (InterruptedException e) {
+                // ignore
+            }
+        }
     }
 }
