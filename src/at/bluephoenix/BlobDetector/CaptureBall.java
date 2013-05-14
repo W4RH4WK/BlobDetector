@@ -67,7 +67,7 @@ public class CaptureBall extends FiniteStateMachine {
         },
         Capture {
             public State run() {
-                NervHub.getInstance().setHook(Hook.Up);
+                NervHub.getInstance().setHook(Hook.Down);
                 return Verify;
             }
         },
