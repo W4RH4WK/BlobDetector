@@ -60,13 +60,14 @@ public class CaptureBall extends FiniteStateMachine {
                     data.setDirection(Direction.Forward);
                     return Advance;
                 } else {
+                    data.setDirection(Direction.Stop);
                     return Capture;
                 }
             }
         },
         Capture {
             public State run() {
-                // TODO lower bar
+                NervHub.getInstance().setHook(Hook.Up);
                 return Verify;
             }
         },

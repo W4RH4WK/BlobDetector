@@ -81,14 +81,28 @@ public class NervHub {
     /**
      * this member is used to determine the robots desired movement.
      */
-    private Direction direction;
+    private Direction direction = Direction.Stop;
 
     public Direction getDirection() {
         return direction;
     }
 
-    public void setDirection(Direction direction) {
+    public synchronized void setDirection(Direction direction) {
         this.direction = direction;
+    }
+    
+    // ------------------------------------------------------------ HOOK
+    /**
+     * this member is used to determine the robots desired arm / bar state.
+     */
+    private Hook hook = Hook.Up;
+
+    public Hook getHook() {
+        return hook;
+    }
+
+    public synchronized void setHook(Hook hook) {
+        this.hook = hook;
     }
 
     // ------------------------------------------------------------ SINGELTON
