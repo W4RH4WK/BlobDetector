@@ -16,6 +16,8 @@ import org.opencv.imgproc.Imgproc;
 
 import android.view.MotionEvent;
 
+import at.bluephoenix.BlobDetector.Utils.Blob;
+
 public class BlobDetector {
 
     // TAG for debug messages

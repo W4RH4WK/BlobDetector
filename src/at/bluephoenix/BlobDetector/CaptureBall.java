@@ -3,6 +3,10 @@ package at.bluephoenix.BlobDetector;
 import org.opencv.core.Point;
 
 import android.util.Log;
+import at.bluephoenix.BlobDetector.Utils.Blob;
+import at.bluephoenix.BlobDetector.Utils.Direction;
+import at.bluephoenix.BlobDetector.Utils.FiniteStateMachine;
+import at.bluephoenix.BlobDetector.Utils.Hook;
 
 public class CaptureBall extends FiniteStateMachine {
     private enum State {

@@ -1,4 +1,4 @@
-package at.bluephoenix.BlobDetector;
+package at.bluephoenix.BlobDetector.Utils;
 
 abstract public class FiniteStateMachine implements Runnable {
 

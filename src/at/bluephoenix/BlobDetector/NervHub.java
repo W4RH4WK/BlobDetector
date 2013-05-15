@@ -5,6 +5,10 @@ import java.util.List;
 import org.opencv.core.Mat;
 import org.opencv.core.Scalar;
 
+import at.bluephoenix.BlobDetector.Utils.Blob;
+import at.bluephoenix.BlobDetector.Utils.Direction;
+import at.bluephoenix.BlobDetector.Utils.Hook;
+
 public class NervHub {
 
     // ------------------------------------------------------------ IMAGE

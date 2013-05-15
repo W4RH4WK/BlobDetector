@@ -1,4 +1,4 @@
-package at.bluephoenix.BlobDetector;
+package at.bluephoenix.BlobDetector.Utils;
 
 import java.util.Comparator;
 
