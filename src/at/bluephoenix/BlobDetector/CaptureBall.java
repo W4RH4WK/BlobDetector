@@ -2,9 +2,9 @@ package at.bluephoenix.BlobDetector;
 
 import android.util.Log;
 import at.bluephoenix.BlobDetector.Utils.Blob;
-import at.bluephoenix.BlobDetector.Utils.Direction;
 import at.bluephoenix.BlobDetector.Utils.FiniteStateMachine;
-import at.bluephoenix.BlobDetector.Utils.Hook;
+import at.bluephoenix.BlobDetector.Utils.Motion.HookState;
+import at.bluephoenix.BlobDetector.Utils.Motion.MotorState;
 import at.bluephoenix.BlobDetector.Utils.Target;
 
 public class CaptureBall extends FiniteStateMachine {
@@ -31,7 +31,7 @@ public class CaptureBall extends FiniteStateMachine {
         },
         Rotate {
             public State run() {
-                // TODO move robot by 45 deg
+                NervHub.getInstance().getMotion().setMotorState(MotorState.Left);
                 return Scan;
             }
         },
@@ -44,10 +44,10 @@ public class CaptureBall extends FiniteStateMachine {
                 Log.i(BlobDetector.TAG, "Cb: target angle " + targetAngle);
 
                 if (targetAngle < -5) {
-                    data.setDirection(Direction.Left);
+                    data.getMotion().setMotorState(MotorState.Left);
                     return Advance;
                 } else if (targetAngle > 5) {
-                    data.setDirection(Direction.Right);
+                    data.getMotion().setMotorState(MotorState.Right);
                     return Advance;
                 }
 
@@ -56,17 +56,17 @@ public class CaptureBall extends FiniteStateMachine {
                 Log.i(BlobDetector.TAG, "Cb: target distance" + targetDist);
 
                 if (targetDist > 20) {
-                    data.setDirection(Direction.Forward);
+                    data.getMotion().setMotorState(MotorState.Forward);
                     return Advance;
                 } else {
-                    data.setDirection(Direction.Stop);
+                    data.getMotion().setMotorState(MotorState.Stop);
                     return Capture;
                 }
             }
         },
         Capture {
             public State run() {
-                NervHub.getInstance().setHook(Hook.Down);
+                NervHub.getInstance().getMotion().setHookState(HookState.Down);
                 return Verify;
             }
         },

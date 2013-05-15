@@ -6,8 +6,7 @@ import org.opencv.core.Mat;
 import org.opencv.core.Scalar;
 
 import at.bluephoenix.BlobDetector.Utils.Blob;
-import at.bluephoenix.BlobDetector.Utils.Direction;
-import at.bluephoenix.BlobDetector.Utils.Hook;
+import at.bluephoenix.BlobDetector.Utils.Motion;
 import at.bluephoenix.BlobDetector.Utils.Target;
 
 public class NervHub {
@@ -28,7 +27,7 @@ public class NervHub {
 
     // ------------------------------------------------------------ TARGET
     /**
-     * this member holds the current target
+     * this member holds the current target.
      */
     private Target target = null;
     
@@ -42,7 +41,7 @@ public class NervHub {
     
     // ------------------------------------------------------------ TARGET COLOR
     /**
-     * this member holds the color we look for
+     * this member holds the color we look for.
      */
     private Scalar targetColor = null;
     
@@ -82,32 +81,14 @@ public class NervHub {
         this.homography = homography;
     }
 
-    // ------------------------------------------------------------ DIRECTION
+    // ------------------------------------------------------------ MOTION
     /**
-     * this member is used to determine the robots desired movement.
+     * this object determines the robots desired motion.
      */
-    private Direction direction = Direction.Stop;
-
-    public Direction getDirection() {
-        return direction;
-    }
-
-    public synchronized void setDirection(Direction direction) {
-        this.direction = direction;
-    }
+    private Motion motion = new Motion();
     
-    // ------------------------------------------------------------ HOOK
-    /**
-     * this member is used to determine the robots desired arm / bar state.
-     */
-    private Hook hook = Hook.Up;
-
-    public Hook getHook() {
-        return hook;
-    }
-
-    public synchronized void setHook(Hook hook) {
-        this.hook = hook;
+    public Motion getMotion() {
+        return motion;
     }
 
     // ------------------------------------------------------------ SINGELTON
