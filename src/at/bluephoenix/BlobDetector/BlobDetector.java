@@ -28,6 +28,7 @@ public class BlobDetector {
     private static final Scalar calibrationColorTolerance = new Scalar(15, 100,
             100);
     private static final Double fov = 47.5;
+    private static final Integer displayWidth = 800;
 
     /*
      * Following parameters are used for the calibration process. color defines
@@ -254,13 +255,11 @@ public class BlobDetector {
      * 
      * @param src
      *            source point with ego centric coords
-     * @param width
-     *            display width in pixel
      * 
      * @return angle relative to display center (- left / + right)
      */
-    public static Double calcAngle(Point src, int width) {
-        double fact = fov / ((double) width);
+    public static Double calcAngle(Point src) {
+        double fact = fov / ((double) displayWidth);
         return src.x * fact - (fov / 2);
     }
 

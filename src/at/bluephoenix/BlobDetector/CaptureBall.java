@@ -1,12 +1,11 @@
 package at.bluephoenix.BlobDetector;
 
-import org.opencv.core.Point;
-
 import android.util.Log;
 import at.bluephoenix.BlobDetector.Utils.Blob;
 import at.bluephoenix.BlobDetector.Utils.Direction;
 import at.bluephoenix.BlobDetector.Utils.FiniteStateMachine;
 import at.bluephoenix.BlobDetector.Utils.Hook;
+import at.bluephoenix.BlobDetector.Utils.Target;
 
 public class CaptureBall extends FiniteStateMachine {
     private enum State {
@@ -23,7 +22,7 @@ public class CaptureBall extends FiniteStateMachine {
 
                 // check for minimum area
                 if (b.getArea() >= 1000) {
-                    data.setTargetBlob(b);
+                    data.setTarget(new Target(b));
                     return Advance;
                 } else {
                     return Rotate;
@@ -40,8 +39,7 @@ public class CaptureBall extends FiniteStateMachine {
             public State run() {
                 NervHub data = NervHub.getInstance();
 
-                Double targetAngle = BlobDetector.calcAngle(data
-                        .getTargetBlob().getCenter(), data.getImage().width());
+                Double targetAngle = data.getTarget().getAngle();
 
                 Log.i(BlobDetector.TAG, "Cb: target angle " + targetAngle);
 
@@ -53,10 +51,7 @@ public class CaptureBall extends FiniteStateMachine {
                     return Advance;
                 }
 
-                Point target = BlobDetector.displayToWorld(data.getTargetBlob()
-                        .getContact(), data.getHomography());
-                Double targetDist = Math.sqrt(target.x * target.x + target.y
-                        * target.y);
+                Double targetDist = data.getTarget().getDistance();
 
                 Log.i(BlobDetector.TAG, "Cb: target distance" + targetDist);
 
@@ -83,7 +78,7 @@ public class CaptureBall extends FiniteStateMachine {
         },
         End {
             public State run() {
-                NervHub.getInstance().setTargetBlob(null);
+                NervHub.getInstance().setTarget(null);
                 return End;
             }
         };

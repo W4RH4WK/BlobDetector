@@ -8,6 +8,7 @@ import org.opencv.core.Scalar;
 import at.bluephoenix.BlobDetector.Utils.Blob;
 import at.bluephoenix.BlobDetector.Utils.Direction;
 import at.bluephoenix.BlobDetector.Utils.Hook;
+import at.bluephoenix.BlobDetector.Utils.Target;
 
 public class NervHub {
 
@@ -25,17 +26,31 @@ public class NervHub {
         this.image = image;
     }
 
+    // ------------------------------------------------------------ TARGET
+    /**
+     * this member holds the current target
+     */
+    private Target target = null;
+    
+    public Target getTarget() {
+        return target;
+    }
+    
+    public void setTarget(Target target) {
+        this.target = target;
+    }
+    
     // ------------------------------------------------------------ TARGET COLOR
     /**
-     * this member holds the hsv color vector of the desired target.
+     * this member holds the color we look for
      */
-    private Scalar targetColor = new Scalar(0, 100, 100);
-
+    private Scalar targetColor = null;
+    
     public Scalar getTargetColor() {
         return targetColor;
     }
-
-    public synchronized void setTargetColor(Scalar targetColor) {
+    
+    public void setTargetColor(Scalar targetColor) {
         this.targetColor = targetColor;
     }
 
@@ -65,20 +80,6 @@ public class NervHub {
 
     public synchronized void setHomography(Mat homography) {
         this.homography = homography;
-    }
-
-    // ------------------------------------------------------------ TARGET BLOB
-    /**
-     * this member is a reference to his target.
-     */
-    private Blob targetBlob = null;
-
-    public Blob getTargetBlob() {
-        return targetBlob;
-    }
-
-    public synchronized void setTargetBlob(Blob targetBlob) {
-        this.targetBlob = targetBlob;
     }
 
     // ------------------------------------------------------------ DIRECTION
