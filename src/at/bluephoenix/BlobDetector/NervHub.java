@@ -7,7 +7,6 @@ import org.opencv.core.Scalar;
 
 import at.bluephoenix.BlobDetector.Utils.Blob;
 import at.bluephoenix.BlobDetector.Utils.Motion;
-import at.bluephoenix.BlobDetector.Utils.Target;
 
 public class NervHub {
 
@@ -29,13 +28,13 @@ public class NervHub {
     /**
      * this member holds the current target.
      */
-    private Target target = null;
+    private Blob target = null;
     
-    public Target getTarget() {
+    public Blob getTarget() {
         return target;
     }
     
-    public void setTarget(Target target) {
+    public void setTarget(Blob target) {
         this.target = target;
     }
     

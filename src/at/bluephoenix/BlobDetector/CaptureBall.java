@@ -5,7 +5,6 @@ import at.bluephoenix.BlobDetector.Utils.Blob;
 import at.bluephoenix.BlobDetector.Utils.FiniteStateMachine;
 import at.bluephoenix.BlobDetector.Utils.Motion.HookState;
 import at.bluephoenix.BlobDetector.Utils.Motion.MotorState;
-import at.bluephoenix.BlobDetector.Utils.Target;
 
 public class CaptureBall extends FiniteStateMachine {
     private enum State {
@@ -17,25 +16,25 @@ public class CaptureBall extends FiniteStateMachine {
                 try {
                     b = data.getBlobs().get(0);
                 } catch (IndexOutOfBoundsException e) {
-                    return Rotate;
+                    return ScanRotate;
                 }
 
                 // check for minimum area
                 if (b.getArea() >= 1000) {
-                    data.setTarget(new Target(b));
-                    return Advance;
-                } else {
+                    data.setTarget(b);
                     return Rotate;
+                } else {
+                    return ScanRotate;
                 }
             }
         },
-        Rotate {
+        ScanRotate {
             public State run() {
                 NervHub.getInstance().getMotion().setMotorState(MotorState.Left);
                 return Scan;
             }
         },
-        Advance {
+        Rotate {
             public State run() {
                 NervHub data = NervHub.getInstance();
 
@@ -45,11 +44,18 @@ public class CaptureBall extends FiniteStateMachine {
 
                 if (targetAngle < -5) {
                     data.getMotion().setMotorState(MotorState.Left);
-                    return Advance;
+                    return Rotate;
                 } else if (targetAngle > 5) {
                     data.getMotion().setMotorState(MotorState.Right);
-                    return Advance;
+                    return Rotate;
                 }
+                
+                return Advance;
+            }
+        },
+        Advance {
+            public State run() {
+                NervHub data = NervHub.getInstance();
 
                 Double targetDist = data.getTarget().getDistance();
 
