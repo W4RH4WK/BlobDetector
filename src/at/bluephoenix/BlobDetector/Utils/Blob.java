@@ -27,7 +27,7 @@ public class Blob {
         return color;
     }
 
-    // -------------------------------------------------- ADVANCED MEMBERS
+    // -------------------------------------------------- DYNAMIC MEMBERS
     private Integer area = null;
     private Point center = null;
     private Point contact = null;
@@ -80,8 +80,8 @@ public class Blob {
      */
     public Point getCoords() throws NullPointerException {
         if (coords == null)
-            coords = BlobDetector.displayToWorld(getContact(), NervHub.getInstance()
-                    .getHomography());
+            coords = BlobDetector.displayToWorld(getContact(), NervHub
+                    .getInstance().getHomography());
 
         return coords;
     }
@@ -99,8 +99,10 @@ public class Blob {
     }
 
     /**
-     * calucaltes the distance to the object. Throws a NullPointerException if no homography is set.
-     * @return
+     * calucaltes the distance to the object. Throws a NullPointerException if
+     * no homography is set.
+     * 
+     * @return distance to object
      */
     public Double getDistance() throws NullPointerException {
         if (distance == null) {
@@ -111,6 +113,7 @@ public class Blob {
         return distance;
     }
 
+    // -------------------------------------------------- CONSTRUCTOR
     public Blob(MatOfPoint contour, Scalar color) {
         this(Imgproc.boundingRect(contour), color);
     }
@@ -120,12 +123,14 @@ public class Blob {
         this.box = box;
     }
 
+    // -------------------------------------------------- METHODS
     public void drawTo(Mat Rgba) {
         Core.rectangle(Rgba, box.tl(), box.br(), new Scalar(255, 0, 0, 255));
         Core.circle(Rgba, getCenter(), 5, new Scalar(0, 0, 255, 255));
         Core.circle(Rgba, getContact(), 5, new Scalar(0, 255, 0, 255));
     }
 
+    // -------------------------------------------------- COMPARATORS
     public static class compareArea implements Comparator<Blob> {
         @Override
         public int compare(Blob arg0, Blob arg1) {
