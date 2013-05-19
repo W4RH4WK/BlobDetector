@@ -6,6 +6,7 @@ only source files are contained, please download the libs manually.
 
 ## Libraries
 - [Android SDK](http://developer.android.com/sdk/index.html)
+- [IOIO](https://github.com/ytai/ioio)
 - [OpenCV](http://opencv.org/platforms/android.html)
 
 ## License
