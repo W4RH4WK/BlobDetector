@@ -45,6 +45,7 @@ public class BlobDetectorActivity extends IOIOActivity implements
 
 	// menu items
 	private MenuItem mCalibrate;
+	private MenuItem mSetHomgraphy;
 
 	// looper sensor info
 	private String analog[] = new String[9];
@@ -95,6 +96,7 @@ public class BlobDetectorActivity extends IOIOActivity implements
 	public boolean onCreateOptionsMenu(Menu menu) {
 		Log.i(BlobDetector.TAG, "called onCreateOptionsMenu");
 		mCalibrate = menu.add("Calibrate");
+		mSetHomgraphy = menu.add("Set homgraphy");
 		return true;
 	}
 
@@ -106,6 +108,21 @@ public class BlobDetectorActivity extends IOIOActivity implements
 			data.setHomography(BlobDetector.calibrateCamera(data.getImage()));
 			if (data.getHomography() == null)
 				Log.w(BlobDetector.TAG, "calibration not successful");
+		} else if (item == mSetHomgraphy) {
+			Log.i(BlobDetector.TAG, "set homography");
+			float homography[] = new float[] { 0.024397933159663418f,
+					0.11604084560949147f, 20.214011072917067f,
+					0.15628670103383063f, 0.3225423235139476f,
+					3.181678904735975f, 0.007862597447162556f,
+					0.012476325460466571f, 1.0f };
+
+			Mat m = new Mat(3, 3, CvType.CV_32FC1);
+			m.put(0, 0, homography);
+
+			data.setHomography(m);
+			if (data.getHomography() == null)
+				Log.w(BlobDetector.TAG, "calibration not successful");
+
 		}
 		return true;
 	}
@@ -378,16 +395,16 @@ public class BlobDetectorActivity extends IOIOActivity implements
 		public void loop() throws ConnectionLostException, InterruptedException {
 			super.loop();
 
-			switch (data.getMotion().getHookState()) {
-			case Down:
-				gripper(true);
-				break;
-			case Up:
-				gripper(false);
-				break;
-			default:
-				break;
-			}
+			// switch (data.getMotion().getHookState()) {
+			// case Down:
+			// gripper(true);
+			// break;
+			// case Up:
+			// gripper(false);
+			// break;
+			// default:
+			// break;
+			// }
 
 			switch (data.getMotion().getMotorState()) {
 			case Backward:
@@ -408,6 +425,8 @@ public class BlobDetectorActivity extends IOIOActivity implements
 			default:
 				break;
 			}
+			robotLED(100);
+
 		}
 
 		@Override
