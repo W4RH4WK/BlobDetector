@@ -42,7 +42,7 @@ public class NervHub {
     /**
      * this member holds the color we look for.
      */
-    private Scalar targetColor = null;
+    private Scalar targetColor = new Scalar(0, 100, 100);
     
     public Scalar getTargetColor() {
         return targetColor;
