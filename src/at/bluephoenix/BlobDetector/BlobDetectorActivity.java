@@ -176,6 +176,9 @@ public class BlobDetectorActivity extends IOIOActivity implements
 				// ignore
 			}
 		}
+		Core.putText(frame, data.getMotion().getMotorState().toString(),
+				new Point(20, 105), Core.FONT_HERSHEY_PLAIN, 1, new Scalar(255,
+						0, 0));
 
 		return frame;
 	}
