@@ -30,7 +30,8 @@ public class CaptureBall extends FiniteStateMachine {
         },
         ScanRotate {
             public State run() {
-                NervHub.getInstance().getMotion().setMotorState(MotorState.Left);
+                NervHub.getInstance().getMotion()
+                        .setMotorState(MotorState.Left);
                 return Scan;
             }
         },
@@ -49,7 +50,7 @@ public class CaptureBall extends FiniteStateMachine {
                     data.getMotion().setMotorState(MotorState.Right);
                     return Rotate;
                 }
-                
+
                 return Advance;
             }
         },
@@ -111,7 +112,7 @@ public class CaptureBall extends FiniteStateMachine {
 
         while (!cb.isFinished()) {
             cb.exec();
-            
+
             try {
                 Thread.sleep(20);
             } catch (InterruptedException e) {

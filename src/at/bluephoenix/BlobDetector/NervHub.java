@@ -29,25 +29,25 @@ public class NervHub {
      * this member holds the current target.
      */
     private Blob target = null;
-    
+
     public Blob getTarget() {
         return target;
     }
-    
+
     public void setTarget(Blob target) {
         this.target = target;
     }
-    
+
     // ------------------------------------------------------------ TARGET COLOR
     /**
      * this member holds the color we look for.
      */
     private Scalar targetColor = new Scalar(0, 100, 100);
-    
+
     public Scalar getTargetColor() {
         return targetColor;
     }
-    
+
     public void setTargetColor(Scalar targetColor) {
         this.targetColor = targetColor;
     }
@@ -85,7 +85,7 @@ public class NervHub {
      * this object determines the robots desired motion.
      */
     private Motion motion = new Motion();
-    
+
     public Motion getMotion() {
         return motion;
     }
