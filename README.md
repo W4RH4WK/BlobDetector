@@ -15,12 +15,12 @@ only source files are contained, please download the libs manually.
     Authors:
       Alex "W4RH4WK" Hirsch
       Clemens Degasper
-      Michael "Tschigo" Tschol
+      Michael "Tschigo" Tscholl
       Patrik Ober
 
     As long as you retain this notice you can do whatever you want with this
     stuff. If we meet some day, and you think this stuff is worth it, you can
-    buy us a beer in return
+    buy us a beer in return.
 
     This project is distributed in the hope that it will be useful, but WITHOUT ANY
     WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
