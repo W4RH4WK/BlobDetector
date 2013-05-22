@@ -16,6 +16,7 @@ import org.opencv.imgproc.Imgproc;
 
 import android.view.MotionEvent;
 
+import at.bluephoenix.BlobDetector.Utils.Beacon;
 import at.bluephoenix.BlobDetector.Utils.Blob;
 
 public class BlobDetector {
@@ -29,6 +30,7 @@ public class BlobDetector {
             100);
     private static final Double fov = 47.5;
     private static final Integer displayWidth = 800;
+    private static final Double findTolerance = 50.0;
 
     /*
      * Following parameters are used for the calibration process. color defines
@@ -261,6 +263,50 @@ public class BlobDetector {
     public static Double calcAngle(Point src) {
         double fact = fov / ((double) displayWidth);
         return src.x * fact - (fov / 2);
+    }
+
+    /**
+     * find a beacon using two blobs.
+     * 
+     * @param list1
+     *            list of blobs with bottom color
+     * @param list2
+     *            list of blobs with top color
+     * 
+     * @return found beacon / null if no beacon was found
+     */
+    public static Beacon findBeacon(List<Blob> listBot, List<Blob> listTop) {
+        for (Blob bot : listBot) {
+            for (Blob top : listTop) {
+                Double diff;
+
+                // check TL x pos
+                diff = bot.getBox().tl().x - top.getBox().tl().x;
+                if (!(-findTolerance <= diff && diff <= findTolerance))
+                    continue;
+
+                // check BR x pos
+                diff = bot.getBox().br().x - top.getBox().br().x;
+                if (!(-findTolerance <= diff && diff <= findTolerance))
+                    continue;
+
+                // check TL y pos
+                diff = bot.getBox().tl().y - bot.getBox().height
+                        - top.getBox().tl().y;
+                if (!(-findTolerance <= diff && diff <= findTolerance))
+                    continue;
+
+                // check BR y pos
+                diff = bot.getBox().br().y - bot.getBox().height
+                        - top.getBox().br().y;
+                if (!(-findTolerance <= diff && diff <= findTolerance))
+                    continue;
+
+                return new Beacon(bot, top);
+            }
+        }
+
+        return null;
     }
 
 }
