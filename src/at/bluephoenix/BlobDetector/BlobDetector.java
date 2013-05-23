@@ -331,6 +331,13 @@ public class BlobDetector {
     public static Point getPosition(Beacon left, Beacon right)
             throws NullPointerException {
 
+        // swap beacons if needed
+        if (left.getAngle() > right.getAngle()) {
+            Beacon help = left;
+            left = right;
+            right = help;
+        }
+
         Point l = left.getCoords();
         Point r = right.getCoords();
 
