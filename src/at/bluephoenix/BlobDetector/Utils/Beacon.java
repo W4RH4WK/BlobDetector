@@ -41,7 +41,7 @@ public class Beacon {
 
     @Override
     public String toString() {
-        return "[" + coords.x + "/" + coords.y + "]";
+        return "[" + bot.getCoords().x + "/" + bot.getCoords().y + "]";
     }
 
 }
