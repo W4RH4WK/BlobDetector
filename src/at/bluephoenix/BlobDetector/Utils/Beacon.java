@@ -38,4 +38,10 @@ public class Beacon {
                 0, 0, 255, 255));
         Core.circle(Rgba, bot.getContact(), 5, new Scalar(0, 255, 0, 255));
     }
+
+    @Override
+    public String toString() {
+        return "[" + coords.x + "/" + coords.y + "]";
+    }
+
 }
