@@ -326,7 +326,7 @@ public class BlobDetector {
 
     /**
      * uses two beacons with set coordinates to determin the robot's position.
-     * will through a NullPointerException if beacon coords not propperly set.
+     * will throw a NullPointerException if beacon coords not propperly set.
      * 
      * @param l
      *            left beacon
@@ -370,5 +370,32 @@ public class BlobDetector {
         coordY = left.getDistance() / beaconDistance * coordY + l.y;
 
         return new Point(coordX, coordY);
+    }
+
+    /**
+     * calculate absolute view angle of the robot using one beacon. will throw a
+     * NullPointerException if beacon coords not propperly set.
+     * 
+     * @param position
+     *            robot position
+     * 
+     * @param beacon
+     *            reference beacon
+     * 
+     * @return absolute angle
+     * 
+     * @throws NullPointerException
+     */
+    public Double calcAbsAngle(Point position, Beacon beacon) {
+
+        if (beacon.getAbsCoords() == null)
+            throw new NullPointerException();
+
+        Double angle = Math.atan((beacon.getAbsCoords().y - position.y)
+                / (beacon.getAbsCoords().x - position.x));
+
+        // TODO: add pi/2 as needed since -pi/2 <= atan(x) <= pi/2
+
+        return angle;
     }
 }
