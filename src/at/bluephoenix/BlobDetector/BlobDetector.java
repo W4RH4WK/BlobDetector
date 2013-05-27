@@ -273,7 +273,7 @@ public class BlobDetector {
      * @param src
      *            source point with ego centric coords
      * 
-     * @return angle relative to display center (- left / + right)
+     * @return angle relative to display center (- left / + right) in degree
      */
     public static Double calcEgoCentAngle(Point src) {
         double fact = fov / ((double) displayWidth);
@@ -382,7 +382,7 @@ public class BlobDetector {
      * @param beacon
      *            reference beacon
      * 
-     * @return absolute angle
+     * @return absolute angle in degree
      * 
      * @throws NullPointerException
      */
@@ -391,11 +391,17 @@ public class BlobDetector {
         if (beacon.getAbsCoords() == null)
             throw new NullPointerException();
 
-        Double angle = Math.atan((beacon.getAbsCoords().y - position.y)
-                / (beacon.getAbsCoords().x - position.x));
+        Double vx = beacon.getAbsCoords().x - position.x;
+        Double vy = beacon.getAbsCoords().y - position.y;
 
-        // TODO: add pi/2 as needed since -pi/2 <= atan(x) <= pi/2
+        Double angle = Math.atan(vy / vx);
 
-        return angle;
+        if (vx < 0)
+            angle += Math.PI;
+
+        if (vx >= 0 && vy < 0)
+            angle += 2 * Math.PI;
+
+        return angle * 180 / Math.PI;
     }
 }
