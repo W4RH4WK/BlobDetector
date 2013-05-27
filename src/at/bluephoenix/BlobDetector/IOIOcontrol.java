@@ -202,16 +202,16 @@ class IOIOcontrol extends BaseIOIOLooper {
 
         switch (data.getMotion().getMotorState()) {
         case Backward:
-            robotMove(-15);
+            robotMove(-13);
             break;
         case Forward:
-            robotMove(15);
+            robotMove(13);
             break;
         case Left:
-            robotMove(0, 15);
+            robotMove(0, 13);
             break;
         case Right:
-            robotMove(15, 0);
+            robotMove(13, 0);
             break;
         case Stop:
             robotMove(0);
