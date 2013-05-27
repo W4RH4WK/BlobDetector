@@ -80,7 +80,7 @@ public class Blob {
      */
     public Point getCoords() throws NullPointerException {
         if (coords == null)
-            coords = BlobDetector.displayToWorld(getContact(), NervHub
+            coords = BlobDetector.calcEgoCentCoords(getContact(), NervHub
                     .getInstance().getHomography());
 
         return coords;
@@ -93,7 +93,7 @@ public class Blob {
      */
     public Double getAngle() {
         if (angle == null)
-            angle = BlobDetector.calcAngle(getCenter());
+            angle = BlobDetector.calcEgoCentAngle(getCenter());
 
         return angle;
     }

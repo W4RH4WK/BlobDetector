@@ -243,7 +243,7 @@ public class BlobDetector {
     }
 
     /**
-     * get real world coords from display coords.
+     * get ego centric world coords from display coords.
      * 
      * @param src
      *            point with image coords
@@ -252,7 +252,7 @@ public class BlobDetector {
      * 
      * @return point with real world coords
      */
-    public static Point displayToWorld(Point src, Mat homography) {
+    public static Point calcEgoCentCoords(Point src, Mat homography) {
         Mat m1 = new Mat(1, 1, CvType.CV_32FC2);
         Mat m2 = new Mat(1, 1, CvType.CV_32FC2);
         m1.put(0, 0, new double[] { src.x, src.y });
@@ -268,14 +268,14 @@ public class BlobDetector {
     }
 
     /**
-     * calculate angle of a given point in the real world.
+     * calculate angle of a given point in ego centric system.
      * 
      * @param src
      *            source point with ego centric coords
      * 
      * @return angle relative to display center (- left / + right)
      */
-    public static Double calcAngle(Point src) {
+    public static Double calcEgoCentAngle(Point src) {
         double fact = fov / ((double) displayWidth);
         return src.x * fact - (fov / 2);
     }
@@ -336,7 +336,7 @@ public class BlobDetector {
      * 
      * @throws NullPointerException
      */
-    public static Point getPosition(Beacon left, Beacon right)
+    public static Point calcAbsCoords(Beacon left, Beacon right)
             throws NullPointerException {
 
         // swap beacons if needed
