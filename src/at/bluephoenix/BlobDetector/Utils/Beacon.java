@@ -10,14 +10,14 @@ public class Beacon {
     private Blob top = null;
     private Blob bot = null;
 
-    private Point coords = null;
+    private Point absCoords = null;
 
-    public Point getCoords() {
-        return coords;
+    public Point getAbsCoords() {
+        return absCoords;
     }
 
-    public void setCoords(Point coords) {
-        this.coords = coords;
+    public void setAbsCoords(Point absCoords) {
+        this.absCoords = absCoords;
     }
 
     public Beacon(Blob bot, Blob top) {
@@ -31,6 +31,10 @@ public class Beacon {
 
     public Double getAngle() {
         return top.getAngle();
+    }
+
+    public Point getEgoCentCoords() {
+        return bot.getCoords();
     }
 
     public void drawTo(Mat Rgba) {

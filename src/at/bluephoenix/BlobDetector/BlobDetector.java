@@ -338,8 +338,8 @@ public class BlobDetector {
             right = help;
         }
 
-        Point l = left.getCoords();
-        Point r = right.getCoords();
+        Point l = left.getAbsCoords();
+        Point r = right.getAbsCoords();
 
         if (l == null || r == null)
             throw new NullPointerException();
