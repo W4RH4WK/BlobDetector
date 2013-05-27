@@ -48,12 +48,20 @@ public class BlobDetector {
     private static final Point posGreen = new Point(9.1, 22.5);
 
     /**
-     * wrapper for findBlobs using defaultAreaThreshold and
-     * defaultColorTolerance.
+     * wrapper for findBlobs using defaultColorTolerance and
+     * defaultAreaThreshold.
      */
     public static List<Blob> findBlobs(Mat rgbaFrame, Scalar color) {
-        return findBlobs(rgbaFrame, color, defaultAreaThreshold,
-                defaultColorTolerance);
+        return findBlobs(rgbaFrame, color, defaultColorTolerance,
+                defaultAreaThreshold);
+    }
+
+    /**
+     * wrapper for findBlobs using defaultAreaThreshold.
+     */
+    public static List<Blob> findBlobs(Mat rgbaFrame, Scalar color,
+            Scalar tolerance) {
+        return findBlobs(rgbaFrame, color, tolerance, defaultAreaThreshold);
     }
 
     /**
@@ -64,15 +72,15 @@ public class BlobDetector {
      *            rgba matrix of the frame
      * @param color
      *            color to look for
-     * @param areaThreshold
-     *            blobs with area lower than this will be ignored
      * @param colorTolerance
      *            color tolerance for blob searching
+     * @param areaThreshold
+     *            blobs with area lower than this will be ignored
      * 
      * @return sorted list (biggest first)
      */
     public static List<Blob> findBlobs(Mat rgbaFrame, Scalar color,
-            Integer areaThreshold, Scalar colorTolerance) {
+            Scalar colorTolerance, Integer areaThreshold) {
         // blur image
         Mat mPyrDown = new Mat();
         Imgproc.pyrDown(rgbaFrame, mPyrDown);
@@ -198,13 +206,13 @@ public class BlobDetector {
         Blob yellow;
 
         try {
-            red = findBlobs(rgbaFrame, colorRed, 100, calibrationColorTolerance)
+            red = findBlobs(rgbaFrame, colorRed, calibrationColorTolerance)
                     .get(0);
-            green = findBlobs(rgbaFrame, colorGreen, 100,
-                    calibrationColorTolerance).get(0);
-            blue = findBlobs(rgbaFrame, colorBlue, 100,
-                    calibrationColorTolerance).get(0);
-            yellow = findBlobs(rgbaFrame, colorYellow, 100,
+            green = findBlobs(rgbaFrame, colorGreen, calibrationColorTolerance)
+                    .get(0);
+            blue = findBlobs(rgbaFrame, colorBlue, calibrationColorTolerance)
+                    .get(0);
+            yellow = findBlobs(rgbaFrame, colorYellow,
                     calibrationColorTolerance).get(0);
         } catch (IndexOutOfBoundsException e) {
             return null;
