@@ -11,8 +11,8 @@ import org.opencv.core.Scalar;
  * 150 /   0    blue    red
  * 300 /   0    green   red
  *   0 / 150    red     green
- * 150 / 150
- * 300 / 150
+ * 150 / 150    green   blue
+ * 300 / 150    blue    green
  */
 
 public class Beacon {
