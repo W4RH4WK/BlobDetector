@@ -1,16 +1,15 @@
 package at.bluephoenix.BlobDetector;
 
+import ioio.lib.util.IOIOLooper;
+import ioio.lib.util.android.IOIOActivity;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
-import ioio.lib.util.IOIOLooper;
-import ioio.lib.util.android.IOIOActivity;
-
 import org.opencv.android.BaseLoaderCallback;
-import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
 import org.opencv.android.LoaderCallbackInterface;
@@ -22,6 +21,7 @@ import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 
 import android.content.Context;
+import android.hardware.Camera.Parameters;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -44,7 +44,7 @@ public class BlobDetectorActivity extends IOIOActivity implements
     private NervHub data;
 
     // camera handler
-    private CameraBridgeViewBase mOpenCvCameraView;
+    private BlobDetectorView mOpenCvCameraView;
 
     // menu items
     private MenuItem mCalibrate;
@@ -66,7 +66,7 @@ public class BlobDetectorActivity extends IOIOActivity implements
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         setContentView(R.layout.blob_detector_view);
-        mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.blob_detector_view);
+        mOpenCvCameraView = (BlobDetectorView) findViewById(R.id.blob_detector_view);
         mOpenCvCameraView.setCvCameraViewListener(this);
     }
 
@@ -219,6 +219,8 @@ public class BlobDetectorActivity extends IOIOActivity implements
         data.setImage(new Mat(height, width, CvType.CV_8UC4));
         mOpenCvCameraView.setMaxFrameSize(50, 50);
         mOpenCvCameraView.enableFpsMeter();
+        mOpenCvCameraView
+                .setWhiteBalance(Parameters.WHITE_BALANCE_CLOUDY_DAYLIGHT);
     }
 
     @Override
