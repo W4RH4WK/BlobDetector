@@ -29,7 +29,7 @@ public class BlobDetector {
     private static final Scalar defaultColorTolerance = new Scalar(5, 40, 40);
     private static final Scalar calibrationColorTolerance = new Scalar(15, 100,
             100);
-    private static final Double fov = 47.5;
+    private static final Double fov = 60.5;
     private static final Integer displayWidth = 800;
     private static final Double findTolerance = 50.0;
 
@@ -42,6 +42,7 @@ public class BlobDetector {
     private static final Scalar colorGreen = new Scalar(102, 181, 74);
     private static final Scalar colorBlue = new Scalar(150, 255, 75);
     private static final Scalar colorYellow = new Scalar(30, 230, 161);
+    
     private static final Point posYellow = new Point(-8.6, 32.0);
     private static final Point posBlue = new Point(-5.3, 19.4);
     private static final Point posRed = new Point(1.4, 29.5);
