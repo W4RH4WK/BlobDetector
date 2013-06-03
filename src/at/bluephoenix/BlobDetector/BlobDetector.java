@@ -31,7 +31,7 @@ public class BlobDetector {
             100);
     private static final Double fov = 60.5;
     private static final Integer displayWidth = 800;
-    private static final Double findTolerance = 50.0;
+    private static final Double beaconTolerance = 50.0;
 
     /**
      * wrapper for findBlobs using defaultColorTolerance and
@@ -297,24 +297,24 @@ public class BlobDetector {
 
                 // check TL x pos
                 diff = bot.getBox().tl().x - top.getBox().tl().x;
-                if (!(-findTolerance <= diff && diff <= findTolerance))
+                if (!(-beaconTolerance <= diff && diff <= beaconTolerance))
                     continue;
 
                 // check BR x pos
                 diff = bot.getBox().br().x - top.getBox().br().x;
-                if (!(-findTolerance <= diff && diff <= findTolerance))
+                if (!(-beaconTolerance <= diff && diff <= beaconTolerance))
                     continue;
 
                 // check TL y pos
                 diff = bot.getBox().tl().y - bot.getBox().height
                         - top.getBox().tl().y;
-                if (!(-findTolerance <= diff && diff <= findTolerance))
+                if (!(-beaconTolerance <= diff && diff <= beaconTolerance))
                     continue;
 
                 // check BR y pos
                 diff = bot.getBox().br().y - bot.getBox().height
                         - top.getBox().br().y;
-                if (!(-findTolerance <= diff && diff <= findTolerance))
+                if (!(-beaconTolerance <= diff && diff <= beaconTolerance))
                     continue;
 
                 return new Beacon(bot, top);
@@ -378,7 +378,7 @@ public class BlobDetector {
      * 
      * @return absolute angle in degree
      */
-    public Double calcAbsAngle(Point src, Point dst) {
+    public static Double calcAbsAngle(Point src, Point dst) {
 
         Double vx = dst.x - src.x;
         Double vy = dst.y - src.y;
@@ -407,7 +407,7 @@ public class BlobDetector {
      * 
      * @throws NullPointerException
      */
-    public Double calcAbsViewAngle(Point pos, Beacon beacon)
+    public static Double calcAbsViewAngle(Point pos, Beacon beacon)
             throws NullPointerException {
         return calcAbsAngle(pos, beacon.getAbsCoords()) + beacon.getAngle();
     }
