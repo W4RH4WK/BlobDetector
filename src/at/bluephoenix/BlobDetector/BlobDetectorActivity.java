@@ -43,7 +43,6 @@ public class BlobDetectorActivity extends IOIOActivity implements
     // menu items
     private MenuItem mRun;
     private MenuItem mBeaconMode;
-    private MenuItem mCali;
     private boolean displayBeacon = false;
 
     public BlobDetectorActivity() {
@@ -87,7 +86,6 @@ public class BlobDetectorActivity extends IOIOActivity implements
         Log.i(BlobDetector.TAG, "called onCreateOptionsMenu");
         mRun = menu.add("Catch them all");
         mBeaconMode = menu.add("Beacon mode");
-        mCali = menu.add("Calibrate");
         return true;
     }
 
@@ -97,21 +95,9 @@ public class BlobDetectorActivity extends IOIOActivity implements
         if (item == mRun) {
             new Thread(new CaptureBall()).start();
         } else if (item == mBeaconMode) {
-            if (displayBeacon)
-                this.displayBeacon = false;
-            else
-                this.displayBeacon = true;
-        } else if (item == mCali) {
-            float homography[] = new float[] { -0.48386050279626275f,
-                    0.042196191784106295f, 179.741367424205f,
-                    -0.022681435707994146f, 0.18180566396258296f,
-                    -349.760864270296f, -0.0010800683670473294f,
-                    -0.02812441920320001f, 1.0f };
-
-            Mat h = new Mat(3, 3, CvType.CV_32FC1);
-            h.put(0, 0, homography);
-            data.setHomography(h);
+            displayBeacon = !displayBeacon;
         }
+
         return true;
     }
 
@@ -144,107 +130,100 @@ public class BlobDetectorActivity extends IOIOActivity implements
         data.getImage().release();
     }
 
-    private Beacon tempBeacon(Mat frame, Scalar topcolor, Scalar botcolor) {
-        List<Blob> top = BlobDetector.findBlobs(frame, topcolor);
-        List<Blob> bot = BlobDetector.findBlobs(frame, botcolor);
-
-        Beacon beacon = BlobDetector.findBeacon(bot, top);
-
-        for (Blob b : top)
-            b.drawTo(frame);
-
-        for (Blob b : bot)
-            b.drawTo(frame);
-
-        if (beacon != null)
-            beacon.drawTo(frame);
-        return beacon;
-
-    }
-
     @Override
     public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
         data.setImage(inputFrame.rgba());
-        Mat frame;
+
+        Mat frame = inputFrame.rgba().clone();
+
         if (!displayBeacon) {
             data.setBlobs(BlobDetector.findBlobs(data.getImage(),
                     data.getTargetColor()));
 
             // draw some blobs
-            frame = data.getImage().clone();
             for (int i = 0; i < 3; i++) {
                 try {
                     data.getBlobs().get(i).drawTo(frame);
                     break;
                 } catch (IndexOutOfBoundsException e) {
-
+                    // ignore
                 }
             }
 
-            // draw info
+            // target color info
             if (data.getTargetColor() != null) {
-                Scalar c = data.getTargetColor();
-                String sz = String.format("[ %3.0f %3.0f %3.0f ]", c.val[0],
-                        c.val[1], c.val[2]);
-                Core.putText(frame, sz, new Point(20, 55),
+                Scalar color = data.getTargetColor();
+                Core.putText(frame, String.format(
+                        "Color: [ %3.0f %3.0f %3.0f ]", color.val[0],
+                        color.val[1], color.val[2]), new Point(20, 55),
                         Core.FONT_HERSHEY_PLAIN, 1, new Scalar(255, 0, 0));
             }
-            if (data.getHomography() == null) {
-                Core.putText(frame, "not calibrated", new Point(20, 80),
+
+            // target handling
+            try {
+                Blob target = data.getBlobs().get(0);
+                data.setTarget(target);
+
+                // print info
+                Core.putText(frame, String.format(
+                        "Target: [ %3.2f %3.2f ] -- %3.2f",
+                        target.getCoords().x, target.getCoords().y,
+                        target.getDistance()), new Point(20, 80),
                         Core.FONT_HERSHEY_PLAIN, 1, new Scalar(255, 0, 0));
-            } else {
-                try {
-                    data.setTarget(data.getBlobs().get(0));
-
-                    Point p = BlobDetector.calcEgoCentCoords(data.getTarget()
-                            .getContact(), data.getHomography());
-                    String sz = String.format("[ %3.2f %3.2f ]", p.x, p.y);
-                    Core.putText(frame, sz, new Point(20, 80),
-                            Core.FONT_HERSHEY_PLAIN, 1, new Scalar(255, 0, 0));
-                } catch (IndexOutOfBoundsException e) {
-                    data.setTarget(null);
-                }
+            } catch (IndexOutOfBoundsException e) {
+                data.setTarget(null);
             }
 
-            Core.putText(frame, data.getMotion().getMotorState().toString(),
-                    new Point(20, 105), Core.FONT_HERSHEY_PLAIN, 1, new Scalar(
-                            255, 0, 0));
-
-            if (data.getTarget() != null) {
-                Core.putText(frame, data.getTarget().getDistance().toString(),
-                        new Point(20, 125), Core.FONT_HERSHEY_PLAIN, 1,
-                        new Scalar(255, 0, 0));
-            }
+            // motor state info
+            Core.putText(frame, "Motor: "
+                    + data.getMotion().getMotorState().toString(), new Point(
+                    20, 105), Core.FONT_HERSHEY_PLAIN, 1, new Scalar(255, 0, 0));
         } else {
-            frame = inputFrame.rgba();
-
+            // color values
             Scalar red = new Scalar(5, 199, 131);
             Scalar blue = new Scalar(158, 255, 145);
             Scalar green = new Scalar(112, 255, 35);
 
-            Beacon right = tempBeacon(frame, blue, red);
-            Beacon left = tempBeacon(frame, green, blue);
+            // get blobs
+            List<Blob> redBlobs = BlobDetector.findBlobs(frame, red);
+            List<Blob> blueBlobs = BlobDetector.findBlobs(frame, blue);
+            List<Blob> greenBlobs = BlobDetector.findBlobs(frame, green);
 
+            // draw blobs
+            for (Blob b : redBlobs)
+                b.drawTo(frame);
+            for (Blob b : blueBlobs)
+                b.drawTo(frame);
+            for (Blob b : greenBlobs)
+                b.drawTo(frame);
+
+            // get beacons
+            Beacon right = BlobDetector.findBeacon(redBlobs, blueBlobs);
+            Beacon left = BlobDetector.findBeacon(blueBlobs, greenBlobs);
+
+            // draw beacons
             if (left != null)
-                Core.putText(frame, "Left Beacon Okey", new Point(20, 80),
-                        Core.FONT_HERSHEY_PLAIN, 1, new Scalar(255, 0, 0));
+                left.drawTo(frame);
             if (right != null)
-                Core.putText(frame, "Right Beacon Okey", new Point(20, 100),
-                        Core.FONT_HERSHEY_PLAIN, 1, new Scalar(255, 0, 0));
+                right.drawTo(frame);
 
             if (right != null && left != null) {
+                // set coords
                 left.setAbsCoords(new Point(225, 150));
                 right.setAbsCoords(new Point(300, 150));
-                Point p = BlobDetector.calcAbsCoords(left, right);
-                Core.putText(frame, p.x + "/" + p.y, new Point(20, 55),
-                        Core.FONT_HERSHEY_PLAIN, 1, new Scalar(255, 0, 0));
-                Log.i("beacon", p.x + "/" + p.y + "");
-            } else {
-                Core.putText(frame, "Beacons not found", new Point(20, 55),
-                        Core.FONT_HERSHEY_PLAIN, 1, new Scalar(255, 0, 0));
-            }
 
+                // calc position
+                Point pos = BlobDetector.calcAbsCoords(left, right);
+                Double angle = BlobDetector.calcAbsViewAngle(pos, left);
+
+                // print info
+                Core.putText(frame, String.format(
+                        "Pos: [ %3.2f %3.2f ] < %3.1f", pos.x, pos.y, angle),
+                        new Point(20, 55), Core.FONT_HERSHEY_PLAIN, 1,
+                        new Scalar(255, 0, 0));
+            }
         }
+
         return frame;
     }
 
