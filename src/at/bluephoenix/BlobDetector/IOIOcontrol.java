@@ -27,6 +27,7 @@ class IOIOcontrol extends BaseIOIOLooper {
         twi = ioio_.openTwiMaster(1, TwiMaster.Rate.RATE_100KHz, false);
         servo_ = ioio_.openPwmOutput(10, 50);
         data = NervHub.getInstance();
+        servo_.setDutyCycle(0.0001f);
     }
 
     protected void robotForward(int fwd) {
@@ -115,19 +116,28 @@ class IOIOcontrol extends BaseIOIOLooper {
         robotLED(intensity, intensity);
     }
 
-    protected void gripper(boolean gripperState) {
-        try {
-            if (gripperState) {
-                servo_.setDutyCycle(0.0001f);
+    int helpGrippter = 10;
 
-            } else {
-                servo_.setDutyCycle(0.0528f);
+    protected void robotGripper(boolean b) {
+        if (b)
+            try {
+                // servo_.setDutyCycle(0.0528f + 100 * 0.0005f);
 
+                servo_.setDutyCycle(0.0528f - helpGrippter * 0.0005f);
+                if (helpGrippter < 100)
+                    helpGrippter += 10;
+            } catch (ConnectionLostException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
             }
-        } catch (ConnectionLostException e) {
-            e.printStackTrace();
-        }
-
+        else
+            try {
+                servo_.setDutyCycle(0.0528f + 0 * 0.0005f);
+                helpGrippter = 10;
+            } catch (ConnectionLostException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
     }
 
     protected void robotReadSensor() {
@@ -190,11 +200,11 @@ class IOIOcontrol extends BaseIOIOLooper {
         switch (data.getMotion().getHookState()) {
         case Down:
             robotLED(100, 0);
-            // gripper(true);
+            robotGripper(false);
             break;
         case Up:
             robotLED(0, 100);
-            // gripper(false);
+            robotGripper(true);
             break;
         default:
             break;

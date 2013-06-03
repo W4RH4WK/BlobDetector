@@ -25,28 +25,13 @@ public class BlobDetector {
     // TAG for debug messages
     public static final String TAG = "BlobDetector";
 
-    private static final Integer defaultAreaThreshold = 1000;
+    private static final Integer defaultAreaThreshold = 500;
     private static final Scalar defaultColorTolerance = new Scalar(5, 40, 40);
     private static final Scalar calibrationColorTolerance = new Scalar(15, 100,
             100);
     private static final Double fov = 60.5;
     private static final Integer displayWidth = 800;
     private static final Double findTolerance = 50.0;
-
-    /*
-     * Following parameters are used for the calibration process. color defines
-     * the HSV vector for the according color blob pos holds to postion in real
-     * world and are used to calculate the homography matrix
-     */
-    private static final Scalar colorRed = new Scalar(8, 214, 186);
-    private static final Scalar colorGreen = new Scalar(102, 181, 74);
-    private static final Scalar colorBlue = new Scalar(150, 255, 75);
-    private static final Scalar colorYellow = new Scalar(30, 230, 161);
-    
-    private static final Point posYellow = new Point(-8.6, 32.0);
-    private static final Point posBlue = new Point(-5.3, 19.4);
-    private static final Point posRed = new Point(1.4, 29.5);
-    private static final Point posGreen = new Point(9.1, 22.5);
 
     /**
      * wrapper for findBlobs using defaultColorTolerance and
@@ -205,9 +190,10 @@ public class BlobDetector {
         Beacon topright;
         Beacon botleft;
         Beacon botright;
-        Scalar Sred = new Scalar(5, 255, 51);
-        Scalar Sblue = new Scalar(149, 255, 36);
-        Scalar Sgreen = new Scalar(118, 185, 23);
+
+        Scalar Sred = new Scalar(9, 255, 176);
+        Scalar Sblue = new Scalar(48, 210, 56);
+        Scalar Sgreen = new Scalar(113, 148, 32);
         Scalar Syellow = new Scalar(33, 188, 210);
 
         List<Blob> red = findBlobs(rgbaFrame, Sred, calibrationColorTolerance);
@@ -226,16 +212,16 @@ public class BlobDetector {
                 || botright == null)
             return null;
 
-        topleft.setAbsCoords(new Point(-60, 160));
-        topright.setAbsCoords(new Point(60, 160));
-        botleft.setAbsCoords(new Point(-20, 60));
-        botright.setAbsCoords(new Point(20, 30));
+        topleft.setAbsCoords(new Point(18.0, 113.0));
+        topright.setAbsCoords(new Point(776.0, 89.0));
+        botleft.setAbsCoords(new Point(0.0, 480.0));
+        botright.setAbsCoords(new Point(800.0, 480.0));
 
-        Point[] pixels = { topleft.getContect(), topright.getContect(),
-                botleft.getContect(), botright.getContect() };
+        Point[] pixels = { new Point(18.0, 113.0), new Point(776.0, 89.0),
+                new Point(0.0, 480.0), new Point(800.0, 480.0) };
 
-        Point[] blobs = { topleft.getAbsCoords(), topright.getAbsCoords(),
-                botleft.getAbsCoords(), botright.getAbsCoords() };
+        Point[] blobs = { new Point(-80.0, 150.0), new Point(82.0, 150.0),
+                new Point(-16.0, 21.0), new Point(14.0, 21.0) };
 
         MatOfPoint2f src = new MatOfPoint2f();
         MatOfPoint2f dst = new MatOfPoint2f();

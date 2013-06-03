@@ -90,6 +90,19 @@ public class NervHub {
         return motion;
     }
 
+    // ------------------------------------------------------------ Constructor
+    public NervHub() {
+        // float homography[] = new float[] { -0.48386050279626275f,
+        // 0.042196191784106295f, 179.741367424205f,
+        // -0.022681435707994146f, 0.18180566396258296f,
+        // -349.760864270296f, -0.0010800683670473294f,
+        // -0.02812441920320001f, 1.0f };
+        //
+        // Mat h = new Mat(3, 3, CvType.CV_32FC1);
+        // h.put(0, 0, homography);
+        // this.homography = h;
+    }
+
     // ------------------------------------------------------------ SINGELTON
     private final static NervHub instance = new NervHub();
 

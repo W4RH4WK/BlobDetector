@@ -43,10 +43,10 @@ public class CaptureBall extends FiniteStateMachine {
 
                 Log.i(BlobDetector.TAG, "Cb: target angle " + targetAngle);
 
-                if (targetAngle < -5) {
+                if (targetAngle < -8) {
                     data.getMotion().setMotorState(MotorState.Left);
                     return Scan;
-                } else if (targetAngle > 5) {
+                } else if (targetAngle > 8) {
                     data.getMotion().setMotorState(MotorState.Right);
                     return Scan;
                 }
@@ -62,7 +62,7 @@ public class CaptureBall extends FiniteStateMachine {
 
                 Log.i(BlobDetector.TAG, "Cb: target distance" + targetDist);
 
-                if (targetDist > 15) {
+                if (targetDist > 25) {
                     data.getMotion().setMotorState(MotorState.Forward);
                     return Scan;
                 } else {
