@@ -5,6 +5,16 @@ import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 
+/*
+ *   COORDS     BOT     TOP
+ *   0 /   0    red     blue
+ * 150 /   0    blue    red
+ * 300 /   0    green   red
+ *   0 / 150    red     green
+ * 150 / 150    green   blue
+ * 300 / 150    blue    green
+ */
+
 public class Beacon {
 
     private Blob top = null;

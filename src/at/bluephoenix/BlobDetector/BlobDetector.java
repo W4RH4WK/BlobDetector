@@ -362,9 +362,6 @@ public class BlobDetector {
         Point l = left.getAbsCoords();
         Point r = right.getAbsCoords();
 
-        if (l == null || r == null)
-            throw new NullPointerException();
-
         Double beaconDistance = Math.sqrt(Math.pow((l.x - r.x), 2)
                 + Math.pow((l.y - r.y), 2));
 
@@ -423,10 +420,8 @@ public class BlobDetector {
      * 
      * @throws NullPointerException
      */
-    public Double calcAbsViewAngle(Point pos, Beacon beacon) {
-        if (beacon.getAbsCoords() == null)
-            throw new NullPointerException();
-
+    public Double calcAbsViewAngle(Point pos, Beacon beacon)
+            throws NullPointerException {
         return calcAbsAngle(pos, beacon.getAbsCoords()) + beacon.getAngle();
     }
 }
