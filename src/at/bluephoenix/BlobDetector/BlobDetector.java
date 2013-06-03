@@ -200,28 +200,41 @@ public class BlobDetector {
      * @return homography matrix
      */
     public static Mat calibrateCamera(Mat rgbaFrame) {
-        Blob red;
-        Blob green;
-        Blob blue;
-        Blob yellow;
+        Beacon topleft;
+        Beacon topright;
+        Beacon botleft;
+        Beacon botright;
+        Scalar Sred = new Scalar(5, 255, 51);
+        Scalar Sblue = new Scalar(149, 255, 36);
+        Scalar Sgreen = new Scalar(118, 185, 23);
+        Scalar Syellow = new Scalar(33, 188, 210);
 
-        try {
-            red = findBlobs(rgbaFrame, colorRed, calibrationColorTolerance)
-                    .get(0);
-            green = findBlobs(rgbaFrame, colorGreen, calibrationColorTolerance)
-                    .get(0);
-            blue = findBlobs(rgbaFrame, colorBlue, calibrationColorTolerance)
-                    .get(0);
-            yellow = findBlobs(rgbaFrame, colorYellow,
-                    calibrationColorTolerance).get(0);
-        } catch (IndexOutOfBoundsException e) {
+        List<Blob> red = findBlobs(rgbaFrame, Sred, calibrationColorTolerance);
+        List<Blob> yellow = findBlobs(rgbaFrame, Syellow,
+                calibrationColorTolerance);
+        List<Blob> green = findBlobs(rgbaFrame, Sgreen,
+                calibrationColorTolerance);
+        List<Blob> blue = findBlobs(rgbaFrame, Sblue, calibrationColorTolerance);
+
+        topleft = findBeacon(red, yellow);
+        topright = findBeacon(blue, red);
+        botleft = findBeacon(yellow, blue);
+        botright = findBeacon(green, blue);
+
+        if (topleft == null || topright == null || botleft == null
+                || botright == null)
             return null;
-        }
 
-        Point[] pixels = { yellow.getCenter(), blue.getCenter(),
-                red.getCenter(), green.getCenter(), };
+        topleft.setAbsCoords(new Point(-60, 160));
+        topright.setAbsCoords(new Point(60, 160));
+        botleft.setAbsCoords(new Point(-20, 60));
+        botright.setAbsCoords(new Point(20, 30));
 
-        Point[] blobs = { posYellow, posBlue, posRed, posGreen };
+        Point[] pixels = { topleft.getContect(), topright.getContect(),
+                botleft.getContect(), botright.getContect() };
+
+        Point[] blobs = { topleft.getAbsCoords(), topright.getAbsCoords(),
+                botleft.getAbsCoords(), botright.getAbsCoords() };
 
         MatOfPoint2f src = new MatOfPoint2f();
         MatOfPoint2f dst = new MatOfPoint2f();
@@ -355,11 +368,10 @@ public class BlobDetector {
         Double beaconDistance = Math.sqrt(Math.pow((l.x - r.x), 2)
                 + Math.pow((l.y - r.y), 2));
 
-        Double alpha = Math
-                .acos((Math.pow(right.getDistance(), 2)
-                        - Math.pow(left.getDistance(), 2) - Math.pow(
-                        beaconDistance, 2))
-                        / (-2 * left.getDistance() * beaconDistance));
+        Double alpha = (Math.pow(right.getDistance(), 2)
+                - Math.pow(left.getDistance(), 2) - Math.pow(beaconDistance, 2))
+                / (-2 * left.getDistance() * beaconDistance);
+        alpha = Math.acos(alpha);
 
         Double coordX = Math.cos(alpha) * (r.x - l.x) + Math.sin(alpha)
                 * (r.y - l.y);

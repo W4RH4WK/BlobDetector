@@ -1,13 +1,10 @@
 package at.bluephoenix.BlobDetector;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.List;
-
 import ioio.lib.util.IOIOLooper;
 import ioio.lib.util.android.IOIOActivity;
+
+import java.io.FileOutputStream;
+import java.util.List;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
@@ -102,11 +99,11 @@ public class BlobDetectorActivity extends IOIOActivity implements
         return true;
     }
 
-    public static String pack(float[] data) {
+    private static String pack(float[] d) {
         StringBuilder sb = new StringBuilder();
-        final int length = data.length;
+        final int length = d.length;
         for (int i = 0; i < length; i++) {
-            sb.append(data[i]);
+            sb.append(d[i]);
             if (i < (length - 1)) {
                 sb.append(':');
             }
@@ -114,7 +111,7 @@ public class BlobDetectorActivity extends IOIOActivity implements
         return sb.toString();
     }
 
-    public static float[] unpack(String str) {
+    private static float[] unpack(String str) {
         if (TextUtils.isEmpty(str)) {
             return new float[0];
         } else {
@@ -134,35 +131,56 @@ public class BlobDetectorActivity extends IOIOActivity implements
         if (item == mCalibrate) {
             Log.i(BlobDetector.TAG, "calibrating camera");
             data.setHomography(BlobDetector.calibrateCamera(data.getImage()));
+
             if (data.getHomography() == null)
                 Log.w(BlobDetector.TAG, "calibration not successful");
         } else if (item == mSetHomography) {
             Log.i("homography", "homography loading");
+            //
+            // FileInputStream inputStream;
+            // String str = "";
+            // try {
+            // inputStream = new FileInputStream("homography");
+            // byte[] input = new byte[inputStream.available()];
+            // while (inputStream.read(input) != -1) {
+            // str += new String(input);
+            // }
+            // inputStream.close();
+            // Log.i("homography", "homography loaded");
+            // } catch (FileNotFoundException e) {
+            // // TODO Auto-generated catch block
+            // e.printStackTrace();
+            // } catch (IOException e) {
+            // // TODO Auto-generated catch block
+            // e.printStackTrace();
+            // }
+            //
+            // Log.i(BlobDetector.TAG, "set homography");
+            // float homography[] = unpack(str);
 
-            FileInputStream inputStream;
-            String str = "";
-            try {
-                inputStream = new FileInputStream("homography");
-                byte[] input = new byte[inputStream.available()];
-                while (inputStream.read(input) != -1) {
-                    str += new String(input);
-                }
-                inputStream.close();
-                Log.i("homography", "homography loaded");
-            } catch (FileNotFoundException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+            // float homography[] = new float[] { 0.021040694258707436f,
+            // 0.013574380850614673f, -9.12896273953139f,
+            // 0.018800192214116166f, -0.12060655806359954f,
+            // 35.527793344275615f, 9.272118259780662E-4f,
+            // -0.0034178208136264937f, 1.0f };
 
-            Log.i(BlobDetector.TAG, "set homography");
-            float homography[] = unpack(str);
-            Mat m = new Mat(3, 3, CvType.CV_32FC1);
-            m.put(0, 0, homography);
+            float homography[] = new float[] { 0.046508994519266864f,
+                    -0.0027245021079429187f, -19.106040042251394f,
+                    -0.006494253301982257f, -0.03466917822971036f,
+                    38.78890952690519f, -1.5722799071954852E-4f,
+                    0.0013833986549901976f, 1.0f };
 
-            data.setHomography(m);
+            Mat h = new Mat(3, 3, CvType.CV_32FC1);
+            h.put(0, 0, homography);
+
+            Log.i("homoRead",
+                    h.get(0, 0)[0] + " " + h.get(0, 1)[0] + " "
+                            + h.get(0, 2)[0] + " " + h.get(1, 0)[0] + " "
+                            + h.get(1, 1)[0] + " " + h.get(1, 2)[0] + " "
+                            + h.get(2, 0)[0] + " " + h.get(2, 1)[0] + " "
+                            + h.get(2, 2)[0] + " ");
+
+            data.setHomography(h);
             if (data.getHomography() == null)
                 Log.w(BlobDetector.TAG, "calibration not successful");
 
@@ -176,6 +194,13 @@ public class BlobDetectorActivity extends IOIOActivity implements
                 outputStream.write(("").getBytes());
 
                 Mat h = BlobDetector.calibrateCamera(data.getImage());
+                Log.i("homoWrite",
+                        h.get(0, 0)[0] + " " + h.get(0, 1)[0] + " "
+                                + h.get(0, 2)[0] + " " + h.get(1, 0)[0] + " "
+                                + h.get(1, 1)[0] + " " + h.get(1, 2)[0] + " "
+                                + h.get(2, 0)[0] + " " + h.get(2, 1)[0] + " "
+                                + h.get(2, 2)[0] + " ");
+
                 float homography[] = new float[] { (float) h.get(0, 0)[0],
                         (float) h.get(0, 1)[0], (float) h.get(0, 2)[0],
                         (float) h.get(1, 0)[0], (float) h.get(1, 1)[0],
@@ -207,8 +232,12 @@ public class BlobDetectorActivity extends IOIOActivity implements
                 event, mOpenCvCameraView.getWidth(),
                 mOpenCvCameraView.getHeight()));
 
-        Log.i(BlobDetector.TAG, "new targetcolor = "
-                + data.getTargetColor().toString());
+        try {
+            Log.i(BlobDetector.TAG, "new targetcolor = "
+                    + data.getTargetColor().toString());
+        } catch (NullPointerException e) {
+            // ignore
+        }
 
         // skip subsequent touch events
         return false;
@@ -226,16 +255,16 @@ public class BlobDetectorActivity extends IOIOActivity implements
         data.getImage().release();
     }
 
-    private Beacon tempBeacon(Mat frame, Scalar top, Scalar bottom) {
-        List<Blob> blues = BlobDetector.findBlobs(frame, top);
-        List<Blob> yellows = BlobDetector.findBlobs(frame, bottom);
+    private Beacon tempBeacon(Mat frame, Scalar topcolor, Scalar botcolor) {
+        List<Blob> top = BlobDetector.findBlobs(frame, topcolor);
+        List<Blob> bot = BlobDetector.findBlobs(frame, botcolor);
 
-        Beacon beacon = BlobDetector.findBeacon(blues, yellows);
+        Beacon beacon = BlobDetector.findBeacon(bot, top);
 
-        for (Blob b : blues)
+        for (Blob b : top)
             b.drawTo(frame);
 
-        for (Blob b : yellows)
+        for (Blob b : bot)
             b.drawTo(frame);
 
         if (beacon != null)
@@ -278,11 +307,11 @@ public class BlobDetectorActivity extends IOIOActivity implements
                 try {
                     data.setTarget(data.getBlobs().get(0));
 
-                    // Point p = BlobDetector.displayToWorld(data.getTarget()
-                    // .getContact(), data.getHomography());
-                    // String sz = String.format("[ %3.2f %3.2f ]", p.x, p.y);
-                    // Core.putText(frame, sz, new Point(20, 80),
-                    // Core.FONT_HERSHEY_PLAIN, 1, new Scalar(255, 0, 0));
+                    Point p = BlobDetector.calcEgoCentCoords(data.getTarget()
+                            .getContact(), data.getHomography());
+                    String sz = String.format("[ %3.2f %3.2f ]", p.x, p.y);
+                    Core.putText(frame, sz, new Point(20, 80),
+                            Core.FONT_HERSHEY_PLAIN, 1, new Scalar(255, 0, 0));
                 } catch (IndexOutOfBoundsException e) {
                     data.setTarget(null);
                 }
@@ -300,20 +329,57 @@ public class BlobDetectorActivity extends IOIOActivity implements
         } else {
             frame = inputFrame.rgba();
 
-            Scalar blue = new Scalar(150, 254, 72);
-            Scalar yellow = new Scalar(36, 216, 148);
-            Beacon left = tempBeacon(frame, blue, yellow);
-            Beacon right = tempBeacon(frame, yellow, blue);
+            // Scalar blue = new Scalar(152.3125, 255.0, 98.171875);
+            // Scalar green = new Scalar(135.3125, 246.46875, 118.328125, 0.0);
+            Scalar green = new Scalar(118.8125, 200.3125, 84.046875);
+            Scalar blue = new Scalar(145.890625, 255.0, 238.25);
+            Scalar red = new Scalar(251.765625, 175.921875, 245.265625);
+
+            Beacon right = tempBeacon(frame, red, blue);
+            Beacon left = tempBeacon(frame, blue, green);
+            if (left != null)
+                Core.putText(frame, "Left Beacon Okey", new Point(20, 80),
+                        Core.FONT_HERSHEY_PLAIN, 1, new Scalar(255, 0, 0));
+            if (right != null)
+                Core.putText(frame, "Right Beacon Okey", new Point(20, 100),
+                        Core.FONT_HERSHEY_PLAIN, 1, new Scalar(255, 0, 0));
 
             if (right != null && left != null) {
-                // Core.putText(frame, BlobDetector.getPosition(left, right)
-                // .toString(), new Point(20, 55),
-                // Core.FONT_HERSHEY_PLAIN, 1, new Scalar(255, 0, 0));
+                left.setAbsCoords(new Point(225, 150));
+                right.setAbsCoords(new Point(300, 150));
+                Point p = BlobDetector.calcAbsCoords(left, right);
+                Core.putText(frame, p.x + "/" + p.y, new Point(20, 55),
+                        Core.FONT_HERSHEY_PLAIN, 1, new Scalar(255, 0, 0));
+                Log.i("beacon", p.x + "/" + p.y + "");
             } else {
                 Core.putText(frame, "Beacons not found", new Point(20, 55),
                         Core.FONT_HERSHEY_PLAIN, 1, new Scalar(255, 0, 0));
             }
+
         }
+
+//        Scalar calibrationColorTolerance = new Scalar(15, 100, 100);
+//
+//        List<Blob> Pred = BlobDetector.findBlobs(frame, new Scalar(5, 255, 51),
+//                calibrationColorTolerance);
+//        List<Blob> Pyellow = BlobDetector.findBlobs(frame, new Scalar(33, 188,
+//                210), calibrationColorTolerance);
+//        List<Blob> Pgreen = BlobDetector.findBlobs(frame, new Scalar(118, 185,
+//                23), calibrationColorTolerance);
+//        List<Blob> Pblue = BlobDetector.findBlobs(frame, new Scalar(149, 255,
+//                36), calibrationColorTolerance);
+//
+//        for (Blob b : Pred)
+//            b.drawTo(frame);
+//
+//        for (Blob b : Pyellow)
+//            b.drawTo(frame);
+//
+//        for (Blob b : Pgreen)
+//            b.drawTo(frame);
+//
+//        for (Blob b : Pblue)
+//            b.drawTo(frame);
 
         return frame;
     }

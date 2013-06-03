@@ -25,6 +25,10 @@ public class Beacon {
         this.bot = bot;
     }
 
+    public Point getContect() {
+        return bot.getContact();
+    }
+
     public Double getDistance() {
         return bot.getDistance();
     }
