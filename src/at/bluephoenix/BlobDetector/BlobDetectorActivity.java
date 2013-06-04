@@ -137,6 +137,9 @@ public class BlobDetectorActivity extends IOIOActivity implements
         Mat frame = inputFrame.rgba().clone();
 
         if (!displayBeacon) {
+            Core.putText(frame, "Catch ball mode", new Point(20, 30), Core.FONT_HERSHEY_PLAIN,
+                    1, new Scalar(255, 0, 0));
+
             data.setBlobs(BlobDetector.findBlobs(data.getImage(),
                     data.getTargetColor()));
 
@@ -179,6 +182,9 @@ public class BlobDetectorActivity extends IOIOActivity implements
                     + data.getMotion().getMotorState().toString(), new Point(
                     20, 105), Core.FONT_HERSHEY_PLAIN, 1, new Scalar(255, 0, 0));
         } else {
+            Core.putText(frame, "Becon mode", new Point(20, 30),
+                    Core.FONT_HERSHEY_PLAIN, 1, new Scalar(255, 0, 0));
+
             // color values
             Scalar red = new Scalar(5, 199, 131);
             Scalar blue = new Scalar(158, 255, 145);

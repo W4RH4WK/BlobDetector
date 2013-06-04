@@ -62,30 +62,47 @@ public class CaptureBall extends FiniteStateMachine {
 
                 Log.i(BlobDetector.TAG, "Cb: target distance" + targetDist);
 
-                if (targetDist > 25) {
+                if (targetDist > 22) {
                     data.getMotion().setMotorState(MotorState.Forward);
                     return Scan;
                 } else {
                     data.getMotion().setMotorState(MotorState.Stop);
-                    return Capture;
+                    return HelpAdvance;
                 }
+            }
+        },
+        HelpAdvance {
+            public State run() {
+                NervHub.getInstance().getMotion()
+                        .setMotorState(MotorState.HelpForward);
+                return Capture;
             }
         },
         Capture {
             public State run() {
-                NervHub.getInstance().getMotion().setHookState(HookState.Down);
-                return Verify;
+                NervHub data = NervHub.getInstance();
+                data.getMotion().setHookState(HookState.Down);
+                return GoHome; // now go home
             }
         },
-        Verify {
+        GoHome {
+            /*
+             * 1. Find 2 Beacons
+             * 
+             * 2. Calc coordinates
+             * 
+             * 3. go home
+             */
             public State run() {
-                // TODO verify ball is captured
                 return End;
             }
         },
         End {
             public State run() {
-                NervHub.getInstance().setTarget(null);
+                NervHub data = NervHub.getInstance();
+                data.getMotion().setHookState(HookState.Up);
+                data.getMotion().setMotorState(MotorState.Stop);
+                data.setTarget(null);
                 return End;
             }
         };
@@ -109,7 +126,7 @@ public class CaptureBall extends FiniteStateMachine {
     @Override
     public void run() {
         CaptureBall cb = new CaptureBall();
-
+        NervHub.getInstance().getMotion().setHookState(HookState.Up);
         while (!cb.isFinished()) {
             cb.exec();
 

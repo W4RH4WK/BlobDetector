@@ -7,7 +7,7 @@ public class Motion {
     }
 
     public enum MotorState {
-        Forward, Backward, Left, Right, Stop;
+        Forward, HelpForward, Backward, Left, Right, Stop;
     }
 
     private HookState hookState;
@@ -31,7 +31,7 @@ public class Motion {
     }
 
     public Motion() {
-        hookState = HookState.Up;
-        motorState = MotorState.Stop;
+        this.hookState = HookState.Up;
+        this.motorState = MotorState.Stop;
     }
 }

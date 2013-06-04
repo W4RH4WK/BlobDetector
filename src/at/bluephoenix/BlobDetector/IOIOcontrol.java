@@ -21,6 +21,10 @@ class IOIOcontrol extends BaseIOIOLooper {
     @SuppressWarnings("unused")
     private short anglePos;
 
+    // for help
+    private int helpGrippter = 10;
+    private boolean onceFwd = false;
+
     @Override
     protected void setup() throws ConnectionLostException, InterruptedException {
         super.setup();
@@ -116,13 +120,9 @@ class IOIOcontrol extends BaseIOIOLooper {
         robotLED(intensity, intensity);
     }
 
-    int helpGrippter = 10;
-
     protected void robotGripper(boolean b) {
         if (b)
             try {
-                // servo_.setDutyCycle(0.0528f + 100 * 0.0005f);
-
                 servo_.setDutyCycle(0.0528f - helpGrippter * 0.0005f);
                 if (helpGrippter < 100)
                     helpGrippter += 10;
@@ -205,17 +205,24 @@ class IOIOcontrol extends BaseIOIOLooper {
         case Up:
             robotLED(0, 100);
             robotGripper(true);
+            onceFwd = true;
             break;
         default:
             break;
         }
 
         switch (data.getMotion().getMotorState()) {
-        case Backward:
-            robotMove(-13);
-            break;
         case Forward:
             robotMove(13);
+            break;
+        case HelpForward:
+            if (onceFwd) {
+                robotForward(14);
+                onceFwd = false;
+            }
+            break;
+        case Backward:
+            robotMove(-13);
             break;
         case Left:
             robotMove(0, 13);
