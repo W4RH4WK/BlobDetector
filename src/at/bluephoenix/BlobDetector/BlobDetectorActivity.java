@@ -3,6 +3,7 @@ package at.bluephoenix.BlobDetector;
 import ioio.lib.util.IOIOLooper;
 import ioio.lib.util.android.IOIOActivity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.opencv.android.BaseLoaderCallback;
@@ -137,8 +138,8 @@ public class BlobDetectorActivity extends IOIOActivity implements
         Mat frame = inputFrame.rgba().clone();
 
         if (!displayBeacon) {
-            Core.putText(frame, "Catch ball mode", new Point(20, 30), Core.FONT_HERSHEY_PLAIN,
-                    1, new Scalar(255, 0, 0));
+            Core.putText(frame, "Catch ball mode", new Point(20, 30),
+                    Core.FONT_HERSHEY_PLAIN, 1, new Scalar(255, 0, 0));
 
             data.setBlobs(BlobDetector.findBlobs(data.getImage(),
                     data.getTargetColor()));
@@ -204,19 +205,54 @@ public class BlobDetectorActivity extends IOIOActivity implements
                 b.drawTo(frame);
 
             // get beacons
-            Beacon right = BlobDetector.findBeacon(redBlobs, blueBlobs);
-            Beacon left = BlobDetector.findBeacon(blueBlobs, greenBlobs);
+            Beacon blueGreen = BlobDetector.findBeacon(blueBlobs, greenBlobs);
+            Beacon redBlue = BlobDetector.findBeacon(redBlobs, blueBlobs);
+            Beacon greenBlue = BlobDetector.findBeacon(greenBlobs, blueBlobs);
 
-            // draw beacons
-            if (left != null)
-                left.drawTo(frame);
-            if (right != null)
-                right.drawTo(frame);
+            Beacon redGreen = BlobDetector.findBeacon(redBlobs, greenBlobs);
+            Beacon blueRed = BlobDetector.findBeacon(blueBlobs, redBlobs);
+            Beacon greenRed = BlobDetector.findBeacon(greenBlobs, redBlobs);
 
-            if (right != null && left != null) {
-                // set coords
-                left.setAbsCoords(new Point(225, 150));
-                right.setAbsCoords(new Point(300, 150));
+            List<Beacon> beacons = new ArrayList<Beacon>();
+            if (blueGreen != null) {
+                beacons.add(blueGreen);
+                blueGreen.drawTo(frame);
+                blueGreen.setAbsCoords(new Point(0, 0));
+            }
+            if (redBlue != null) {
+                beacons.add(redBlue);
+                redBlue.drawTo(frame);
+                redBlue.setAbsCoords(new Point(75, 0));
+            }
+            if (greenBlue != null) {
+                beacons.add(greenBlue);
+                redBlue.drawTo(frame);
+                redBlue.setAbsCoords(new Point(150, 0));
+            }
+            if (redGreen != null) {
+                beacons.add(redGreen);
+                redGreen.drawTo(frame);
+                redGreen.setAbsCoords(new Point(0, 150));
+            }
+            if (blueRed != null) {
+                beacons.add(blueRed);
+                blueRed.drawTo(frame);
+                blueRed.setAbsCoords(new Point(75, 150));
+            }
+            if (greenRed != null) {
+                beacons.add(greenRed);
+                greenRed.drawTo(frame);
+                greenRed.setAbsCoords(new Point(150, 150));
+            }
+
+            if (beacons.size() >= 2) {
+                Beacon left = beacons.get(0);
+                Beacon right = beacons.get(1);
+                if (left.getAngle() > right.getAngle()) {
+                    Beacon help = left;
+                    left = right;
+                    right = help;
+                }
 
                 // calc position
                 Point pos = BlobDetector.calcAbsCoords(left, right);
@@ -227,7 +263,9 @@ public class BlobDetectorActivity extends IOIOActivity implements
                         "Pos: [ %3.2f %3.2f ] < %3.1f", pos.x, pos.y, angle),
                         new Point(20, 55), Core.FONT_HERSHEY_PLAIN, 1,
                         new Scalar(255, 0, 0));
+
             }
+
         }
 
         return frame;
