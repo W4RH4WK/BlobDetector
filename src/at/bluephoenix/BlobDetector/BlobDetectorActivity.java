@@ -188,8 +188,8 @@ public class BlobDetectorActivity extends IOIOActivity implements
 
             // color values
             Scalar red = new Scalar(5, 199, 131);
-            Scalar blue = new Scalar(158, 255, 145);
-            Scalar green = new Scalar(112, 255, 35);
+            Scalar blue = new Scalar(151, 255, 116);
+            Scalar green = new Scalar(103, 207, 45);
 
             // get blobs
             List<Blob> redBlobs = BlobDetector.findBlobs(frame, red);
@@ -226,8 +226,8 @@ public class BlobDetectorActivity extends IOIOActivity implements
             }
             if (greenBlue != null) {
                 beacons.add(greenBlue);
-                redBlue.drawTo(frame);
-                redBlue.setAbsCoords(new Point(150, 0));
+                greenBlue.drawTo(frame);
+                greenBlue.setAbsCoords(new Point(150, 0));
             }
             if (redGreen != null) {
                 beacons.add(redGreen);
