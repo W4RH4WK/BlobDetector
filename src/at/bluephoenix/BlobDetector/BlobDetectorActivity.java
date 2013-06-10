@@ -28,6 +28,7 @@ import android.view.View.OnTouchListener;
 import android.view.WindowManager;
 import at.bluephoenix.BlobDetector.Utils.Beacon;
 import at.bluephoenix.BlobDetector.Utils.Blob;
+import at.bluephoenix.BlobDetector.Utils.Motion.MotorState;
 
 /**
  * This class holds android activities as well as the camera handling
@@ -262,6 +263,20 @@ public class BlobDetectorActivity extends IOIOActivity implements
                 Core.putText(frame, String.format(
                         "Pos: [ %3.2f %3.2f ] < %3.1f", pos.x, pos.y, angle),
                         new Point(20, 55), Core.FONT_HERSHEY_PLAIN, 1,
+                        new Scalar(255, 0, 0));
+
+                if (data.getHomeDist() == 0.0) {
+                    Point hq = new Point(13, 37);
+                    double a = pos.x - hq.x;
+                    double b = pos.y - hq.y;
+                    data.setHomeDist(Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2)));
+                    data.setHomeAngle(BlobDetector.calcAbsAngle(pos, hq));
+                    data.getMotion().setMotorState(MotorState.Home);
+
+                }
+                Core.putText(frame,
+                        data.getHomeDist() + " <" + data.getHomeDist(),
+                        new Point(20, 80), Core.FONT_HERSHEY_PLAIN, 1,
                         new Scalar(255, 0, 0));
 
             }

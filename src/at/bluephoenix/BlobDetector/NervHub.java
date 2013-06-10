@@ -101,6 +101,27 @@ public class NervHub {
         return motion;
     }
 
+    // ------------------------------------------------------------ go home
+
+    private double homeDist = 0.0;
+    private double homeAngle = 0.0;
+
+    public double getHomeDist() {
+        return homeDist;
+    }
+
+    public void setHomeDist(double homeDist) {
+        this.homeDist = homeDist;
+    }
+
+    public double getHomeAngle() {
+        return homeAngle;
+    }
+
+    public void setHomeAngle(double homeAngle) {
+        this.homeAngle = homeAngle;
+    }
+
     // ------------------------------------------------------------ SINGELTON
     private final static NervHub instance = new NervHub();
 

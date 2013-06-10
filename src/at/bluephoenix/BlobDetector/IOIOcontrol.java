@@ -7,6 +7,8 @@ import ioio.lib.util.BaseIOIOLooper;
 
 import java.text.DecimalFormat;
 
+import at.bluephoenix.BlobDetector.Utils.Motion.MotorState;
+
 class IOIOcontrol extends BaseIOIOLooper {
     private TwiMaster twi;
     private NervHub data;
@@ -24,6 +26,7 @@ class IOIOcontrol extends BaseIOIOLooper {
     // for help
     private int helpGrippter = 10;
     private boolean onceFwd = false;
+    private boolean onceHome = false;
 
     @Override
     protected void setup() throws ConnectionLostException, InterruptedException {
@@ -232,6 +235,14 @@ class IOIOcontrol extends BaseIOIOLooper {
             break;
         case Stop:
             robotMove(0);
+            break;
+        case Home:
+            if (onceHome) {
+                robotRotate(data.getHomeAngle());
+                robotForward(data.getHomeDist());
+                onceHome = false;
+                data.getMotion().setMotorState(MotorState.Stop);
+            }
             break;
         default:
             break;
