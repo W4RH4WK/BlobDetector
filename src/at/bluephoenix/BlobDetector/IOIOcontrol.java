@@ -26,7 +26,7 @@ class IOIOcontrol extends BaseIOIOLooper {
     // for help
     private int helpGrippter = 10;
     private boolean onceFwd = false;
-    private boolean onceHome = false;
+    private boolean onceHq = false;
 
     @Override
     protected void setup() throws ConnectionLostException, InterruptedException {
@@ -236,11 +236,11 @@ class IOIOcontrol extends BaseIOIOLooper {
         case Stop:
             robotMove(0);
             break;
-        case Home:
-            if (onceHome) {
-                robotRotate(data.getHomeAngle());
-                robotForward(data.getHomeDist());
-                onceHome = false;
+        case Return:
+            if (onceHq) {
+                // robotRotate(data.getHqAngle());
+                robotForward(data.getHqDist());
+                onceHq = false;
                 data.getMotion().setMotorState(MotorState.Stop);
             }
             break;

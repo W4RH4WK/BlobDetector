@@ -101,25 +101,25 @@ public class NervHub {
         return motion;
     }
 
-    // ------------------------------------------------------------ go home
+    // ------------------------------------------------------------ go hq
 
-    private double homeDist = 0.0;
-    private double homeAngle = 0.0;
+    private double hqDist = 0.0;
+    private double hqAngle = 0.0;
 
-    public double getHomeDist() {
-        return homeDist;
+    public double getHqDist() {
+        return hqDist;
     }
 
-    public void setHomeDist(double homeDist) {
-        this.homeDist = homeDist;
+    public void setHqDist(double hqDist) {
+        this.hqDist = hqDist;
     }
 
-    public double getHomeAngle() {
-        return homeAngle;
+    public double getHqAngle() {
+        return hqAngle;
     }
 
-    public void setHomeAngle(double homeAngle) {
-        this.homeAngle = homeAngle;
+    public void setHqAngle(double hqAngle) {
+        this.hqAngle = hqAngle;
     }
 
     // ------------------------------------------------------------ SINGELTON

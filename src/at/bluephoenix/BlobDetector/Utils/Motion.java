@@ -7,7 +7,7 @@ public class Motion {
     }
 
     public enum MotorState {
-        Forward, HelpForward, Backward, Left, Right, Stop, Home;
+        Forward, HelpForward, Backward, Left, Right, Stop, Return;
     }
 
     private HookState hookState;
