@@ -7,23 +7,14 @@ import ioio.lib.util.BaseIOIOLooper;
 
 import java.text.DecimalFormat;
 
-import at.bluephoenix.BlobDetector.Utils.Motion.MotorState;
-
 class IOIOcontrol extends BaseIOIOLooper {
     private TwiMaster twi;
     private NervHub data;
     private PwmOutput servo_;
 
-    // looper sensor info
-    private String analog[] = new String[9];
-    private short xPos;
-    private short yPos;
-    private short anglePos;
-
-    // for help
+    // gripper help
     private int helpGrippter = 10;
     private boolean onceFwd = false;
-    private boolean onceHq = false;
 
     @Override
     protected void setup() throws ConnectionLostException, InterruptedException {
@@ -140,9 +131,11 @@ class IOIOcontrol extends BaseIOIOLooper {
             }
     }
 
-    protected void robotReadSensor() {
+    protected String[] robotReadSensor() {
         byte[] request = new byte[] { 0x10 };
         byte[] response = new byte[8];
+        String analog[] = new String[12];
+
         synchronized (twi) {
             try {
                 twi.writeRead(0x69, false, request, request.length, response,
@@ -187,10 +180,13 @@ class IOIOcontrol extends BaseIOIOLooper {
             }
         }
 
-        xPos = (short) (((response[1] & 0xFF) << 8) | (response[0] & 0xFF));
-        yPos = (short) (((response[3] & 0xFF) << 8) | (response[2] & 0xFF));
-        anglePos = (short) (((response[5] & 0xFF) << 8) | (response[4] & 0xFF));
-
+        analog[9] = (short) (((response[1] & 0xFF) << 8) | (response[0] & 0xFF))
+                + "";
+        analog[10] = (short) (((response[3] & 0xFF) << 8) | (response[2] & 0xFF))
+                + "";
+        analog[11] = (short) (((response[5] & 0xFF) << 8) | (response[4] & 0xFF))
+                + "";
+        return analog;
     }
 
     @Override
@@ -221,9 +217,6 @@ class IOIOcontrol extends BaseIOIOLooper {
                 onceFwd = false;
             }
             break;
-        case Backward:
-            robotMove(-13);
-            break;
         case Left:
             robotMove(0, 13);
             break;
@@ -233,13 +226,9 @@ class IOIOcontrol extends BaseIOIOLooper {
         case Stop:
             robotMove(0);
             break;
-        case Return:
-            if (onceHq) {
-                // robotRotate(data.getHqAngle());
-                robotForward(data.getHqDist());
-                onceHq = false;
-                data.getMotion().setMotorState(MotorState.Stop);
-            }
+        case ForwardHQ:
+            break;
+        case RotateHQ:
             break;
         default:
             break;

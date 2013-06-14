@@ -82,18 +82,29 @@ public class CaptureBall extends FiniteStateMachine {
             public State run() {
                 NervHub data = NervHub.getInstance();
                 data.getMotion().setHookState(HookState.Down);
-                return GoHome; // now go home
+                data.setMode(NervHub.appMode.GoHQ);
+                return ScanHQ;
             }
         },
-        GoHome {
-            /*
-             * 1. Find 2 Beacons
-             * 
-             * 2. Calc coordinates
-             * 
-             * 3. go home
-             */
+        ScanHQ {
             public State run() {
+                NervHub data = NervHub.getInstance();
+                if (data.getHqDist() != 0.0)
+                    data.getMotion().setMotorState(MotorState.Right);
+                return RotateHQ;
+            }
+        },
+        RotateHQ {
+            public State run() {
+                NervHub data = NervHub.getInstance();
+                data.getMotion().setMotorState(MotorState.RotateHQ);
+                return ForwardHQ;
+            }
+        },
+        ForwardHQ {
+            public State run() {
+                NervHub data = NervHub.getInstance();
+                data.getMotion().setMotorState(MotorState.ForwardHQ);
                 return End;
             }
         },

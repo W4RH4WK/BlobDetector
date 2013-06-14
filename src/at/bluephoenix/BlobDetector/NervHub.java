@@ -101,6 +101,10 @@ public class NervHub {
         return motion;
     }
 
+    public void setMotion(Motion motion) {
+        this.motion = motion;
+    }
+
     // ------------------------------------------------------------ go hq
 
     private double hqDist = 0.0;
@@ -120,6 +124,22 @@ public class NervHub {
 
     public void setHqAngle(double hqAngle) {
         this.hqAngle = hqAngle;
+    }
+
+    // ------------------------------------------------------------ MODE
+
+    public enum appMode {
+        CaptureBall, GoHQ
+    };
+
+    private Enum<appMode> mode = NervHub.appMode.CaptureBall;
+
+    public Enum<appMode> getMode() {
+        return mode;
+    }
+
+    public void setMode(Enum<appMode> mode) {
+        this.mode = mode;
     }
 
     // ------------------------------------------------------------ SINGELTON
