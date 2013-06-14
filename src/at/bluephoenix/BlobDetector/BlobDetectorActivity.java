@@ -139,149 +139,99 @@ public class BlobDetectorActivity extends IOIOActivity implements
 
         Mat frame = inputFrame.rgba().clone();
 
-        if (!displayBeacon) {
-            Core.putText(frame, "Catch ball mode", new Point(20, 30),
+        Core.putText(frame, "Becon mode", new Point(20, 30),
+                Core.FONT_HERSHEY_PLAIN, 1, new Scalar(255, 0, 0));
+
+        // color values
+        Scalar red = new Scalar(5, 199, 131);
+        Scalar blue = new Scalar(151, 255, 116);
+        Scalar green = new Scalar(103, 207, 45);
+
+        // get blobs
+        List<Blob> redBlobs = BlobDetector.findBlobs(frame, red);
+        List<Blob> blueBlobs = BlobDetector.findBlobs(frame, blue);
+        List<Blob> greenBlobs = BlobDetector.findBlobs(frame, green);
+
+        // draw blobs
+        for (Blob b : redBlobs)
+            b.drawTo(frame);
+        for (Blob b : blueBlobs)
+            b.drawTo(frame);
+        for (Blob b : greenBlobs)
+            b.drawTo(frame);
+
+        // get beacons
+        Beacon blueGreen = BlobDetector.findBeacon(blueBlobs, greenBlobs);
+        Beacon redBlue = BlobDetector.findBeacon(redBlobs, blueBlobs);
+        Beacon greenBlue = BlobDetector.findBeacon(greenBlobs, blueBlobs);
+
+        Beacon redGreen = BlobDetector.findBeacon(redBlobs, greenBlobs);
+        Beacon blueRed = BlobDetector.findBeacon(blueBlobs, redBlobs);
+        Beacon greenRed = BlobDetector.findBeacon(greenBlobs, redBlobs);
+
+        // if found draw them and set pos
+        List<Beacon> beacons = new ArrayList<Beacon>();
+        if (blueGreen != null) {
+            beacons.add(blueGreen);
+            blueGreen.drawTo(frame);
+            blueGreen.setAbsCoords(new Point(0, 0));
+        }
+        if (redBlue != null) {
+            beacons.add(redBlue);
+            redBlue.drawTo(frame);
+            redBlue.setAbsCoords(new Point(75, 0));
+        }
+        if (greenBlue != null) {
+            beacons.add(greenBlue);
+            greenBlue.drawTo(frame);
+            greenBlue.setAbsCoords(new Point(150, 0));
+        }
+        if (redGreen != null) {
+            beacons.add(redGreen);
+            redGreen.drawTo(frame);
+            redGreen.setAbsCoords(new Point(0, 150));
+        }
+        if (blueRed != null) {
+            beacons.add(blueRed);
+            blueRed.drawTo(frame);
+            blueRed.setAbsCoords(new Point(75, 150));
+        }
+        if (greenRed != null) {
+            beacons.add(greenRed);
+            greenRed.drawTo(frame);
+            greenRed.setAbsCoords(new Point(150, 150));
+        }
+
+        // calc way to hq only once
+        if (beacons.size() >= 2
+                && data.getMotion().getMotorState() != Motion.MotorState.Return) {
+            Beacon left = beacons.get(0);
+            Beacon right = beacons.get(1);
+            if (left.getAngle() > right.getAngle()) {
+                Beacon help = left;
+                left = right;
+                right = help;
+            }
+
+            // calc position
+            Point pos = BlobDetector.calcAbsCoords(left, right);
+            Double angle = BlobDetector.calcAbsViewAngle(pos, left);
+
+            // print info
+            Core.putText(frame, String.format("Pos: [ %3.2f %3.2f ] < %3.1f",
+                    pos.x, pos.y, angle), new Point(20, 55),
                     Core.FONT_HERSHEY_PLAIN, 1, new Scalar(255, 0, 0));
 
-            data.setBlobs(BlobDetector.findBlobs(data.getImage(),
-                    data.getTargetColor()));
-
-            // draw some blobs
-            for (int i = 0; i < 3; i++) {
-                try {
-                    data.getBlobs().get(i).drawTo(frame);
-                    break;
-                } catch (IndexOutOfBoundsException e) {
-                    // ignore
-                }
+            if (data.getHqDist() == 0.0) {
+                Point hq = new Point(13, 37);
+                data.setHqDist(Math.sqrt(Math.pow(pos.x - hq.x, 2)
+                        + Math.pow(pos.y - hq.y, 2)));
+                data.setHqAngle(BlobDetector.calcAbsAngle(pos, hq));
+                data.getMotion().setMotorState(MotorState.Return);
             }
-
-            // target color info
-            if (data.getTargetColor() != null) {
-                Scalar color = data.getTargetColor();
-                Core.putText(frame, String.format(
-                        "Color: [ %3.0f %3.0f %3.0f ]", color.val[0],
-                        color.val[1], color.val[2]), new Point(20, 55),
-                        Core.FONT_HERSHEY_PLAIN, 1, new Scalar(255, 0, 0));
-            }
-
-            // target handling
-            try {
-                Blob target = data.getBlobs().get(0);
-                data.setTarget(target);
-
-                // print info
-                Core.putText(frame, String.format(
-                        "Target: [ %3.2f %3.2f ] -- %3.2f",
-                        target.getCoords().x, target.getCoords().y,
-                        target.getDistance()), new Point(20, 80),
-                        Core.FONT_HERSHEY_PLAIN, 1, new Scalar(255, 0, 0));
-            } catch (IndexOutOfBoundsException e) {
-                data.setTarget(null);
-            }
-
-            // motor state info
-            Core.putText(frame, "Motor: "
-                    + data.getMotion().getMotorState().toString(), new Point(
-                    20, 105), Core.FONT_HERSHEY_PLAIN, 1, new Scalar(255, 0, 0));
-        } else {
-            Core.putText(frame, "Becon mode", new Point(20, 30),
-                    Core.FONT_HERSHEY_PLAIN, 1, new Scalar(255, 0, 0));
-
-            // color values
-            Scalar red = new Scalar(5, 199, 131);
-            Scalar blue = new Scalar(151, 255, 116);
-            Scalar green = new Scalar(103, 207, 45);
-
-            // get blobs
-            List<Blob> redBlobs = BlobDetector.findBlobs(frame, red);
-            List<Blob> blueBlobs = BlobDetector.findBlobs(frame, blue);
-            List<Blob> greenBlobs = BlobDetector.findBlobs(frame, green);
-
-            // draw blobs
-            for (Blob b : redBlobs)
-                b.drawTo(frame);
-            for (Blob b : blueBlobs)
-                b.drawTo(frame);
-            for (Blob b : greenBlobs)
-                b.drawTo(frame);
-
-            // get beacons
-            Beacon blueGreen = BlobDetector.findBeacon(blueBlobs, greenBlobs);
-            Beacon redBlue = BlobDetector.findBeacon(redBlobs, blueBlobs);
-            Beacon greenBlue = BlobDetector.findBeacon(greenBlobs, blueBlobs);
-
-            Beacon redGreen = BlobDetector.findBeacon(redBlobs, greenBlobs);
-            Beacon blueRed = BlobDetector.findBeacon(blueBlobs, redBlobs);
-            Beacon greenRed = BlobDetector.findBeacon(greenBlobs, redBlobs);
-
-            // if found draw them and set pos
-            List<Beacon> beacons = new ArrayList<Beacon>();
-            if (blueGreen != null) {
-                beacons.add(blueGreen);
-                blueGreen.drawTo(frame);
-                blueGreen.setAbsCoords(new Point(0, 0));
-            }
-            if (redBlue != null) {
-                beacons.add(redBlue);
-                redBlue.drawTo(frame);
-                redBlue.setAbsCoords(new Point(75, 0));
-            }
-            if (greenBlue != null) {
-                beacons.add(greenBlue);
-                greenBlue.drawTo(frame);
-                greenBlue.setAbsCoords(new Point(150, 0));
-            }
-            if (redGreen != null) {
-                beacons.add(redGreen);
-                redGreen.drawTo(frame);
-                redGreen.setAbsCoords(new Point(0, 150));
-            }
-            if (blueRed != null) {
-                beacons.add(blueRed);
-                blueRed.drawTo(frame);
-                blueRed.setAbsCoords(new Point(75, 150));
-            }
-            if (greenRed != null) {
-                beacons.add(greenRed);
-                greenRed.drawTo(frame);
-                greenRed.setAbsCoords(new Point(150, 150));
-            }
-            
-            // calc way to hq only once
-            if (beacons.size() >= 2
-                    && data.getMotion().getMotorState() != Motion.MotorState.Return) {
-                Beacon left = beacons.get(0);
-                Beacon right = beacons.get(1);
-                if (left.getAngle() > right.getAngle()) {
-                    Beacon help = left;
-                    left = right;
-                    right = help;
-                }
-
-                // calc position
-                Point pos = BlobDetector.calcAbsCoords(left, right);
-                Double angle = BlobDetector.calcAbsViewAngle(pos, left);
-
-                // print info
-                Core.putText(frame, String.format(
-                        "Pos: [ %3.2f %3.2f ] < %3.1f", pos.x, pos.y, angle),
-                        new Point(20, 55), Core.FONT_HERSHEY_PLAIN, 1,
-                        new Scalar(255, 0, 0));
-
-                if (data.getHqDist() == 0.0) {
-                    Point hq = new Point(13, 37);
-                    data.setHqDist(Math.sqrt(Math.pow(pos.x - hq.x, 2)
-                            + Math.pow(pos.y - hq.y, 2)));
-                    data.setHqAngle(BlobDetector.calcAbsAngle(pos, hq));
-                    data.getMotion().setMotorState(MotorState.Return);
-                }
-                Core.putText(frame,
-                        data.getHqDist() + " <" + data.getHqDist(),
-                        new Point(20, 80), Core.FONT_HERSHEY_PLAIN, 1,
-                        new Scalar(255, 0, 0));
-
-            }
+            Core.putText(frame, data.getHqDist() + " <" + data.getHqDist(),
+                    new Point(20, 80), Core.FONT_HERSHEY_PLAIN, 1, new Scalar(
+                            255, 0, 0));
 
         }
 

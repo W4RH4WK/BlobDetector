@@ -16,11 +16,8 @@ class IOIOcontrol extends BaseIOIOLooper {
 
     // looper sensor info
     private String analog[] = new String[9];
-    @SuppressWarnings("unused")
     private short xPos;
-    @SuppressWarnings("unused")
     private short yPos;
-    @SuppressWarnings("unused")
     private short anglePos;
 
     // for help
