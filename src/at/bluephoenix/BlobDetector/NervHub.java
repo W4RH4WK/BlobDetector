@@ -11,11 +11,24 @@ import at.bluephoenix.BlobDetector.Utils.Motion;
 
 public class NervHub {
 
-    // ------------------------------------------------------------ IMAGE
-    /**
-     * this member holds the current rgba image matrix.
-     */
+    public enum appMode {
+        CaptureBall, GoHQ
+    };
+
     private Mat image = null;
+    private Blob target = null;
+    private Scalar targetColor = new Scalar(0, 100, 100);
+    private List<Blob> blobs = null;
+    private Mat homography = null;
+    private Motion motion = new Motion();
+    private double hqDist = 0.0;
+    private double hqAngle = 0.0;
+    private Enum<appMode> mode = NervHub.appMode.CaptureBall;
+    private final static NervHub instance = new NervHub();
+
+    public static NervHub getInstance() {
+        return instance;
+    }
 
     public Mat getImage() {
         return image;
@@ -25,12 +38,6 @@ public class NervHub {
         this.image = image;
     }
 
-    // ------------------------------------------------------------ TARGET
-    /**
-     * this member holds the current target.
-     */
-    private Blob target = null;
-
     public Blob getTarget() {
         return target;
     }
@@ -38,12 +45,6 @@ public class NervHub {
     public void setTarget(Blob target) {
         this.target = target;
     }
-
-    // ------------------------------------------------------------ TARGET COLOR
-    /**
-     * this member holds the color we look for.
-     */
-    private Scalar targetColor = new Scalar(0, 100, 100);
 
     public Scalar getTargetColor() {
         return targetColor;
@@ -53,12 +54,6 @@ public class NervHub {
         this.targetColor = targetColor;
     }
 
-    // ------------------------------------------------------------ BLOBS
-    /**
-     * this list contains all found blobs sorted from biggest to smallest.
-     */
-    private List<Blob> blobs = null;
-
     public List<Blob> getBlobs() {
         return blobs;
     }
@@ -66,12 +61,6 @@ public class NervHub {
     public synchronized void setBlobs(List<Blob> blobs) {
         this.blobs = blobs;
     }
-
-    // ------------------------------------------------------------ HOMOGRAPHY
-    /**
-     * this member contains the homography matrix.
-     */
-    private Mat homography = null;
 
     public Mat getHomography() {
         if (homography == null) {
@@ -91,12 +80,6 @@ public class NervHub {
         this.homography = homography;
     }
 
-    // ------------------------------------------------------------ MOTION
-    /**
-     * this object determines the robots desired motion.
-     */
-    private Motion motion = new Motion();
-
     public Motion getMotion() {
         return motion;
     }
@@ -104,11 +87,6 @@ public class NervHub {
     public void setMotion(Motion motion) {
         this.motion = motion;
     }
-
-    // ------------------------------------------------------------ go hq
-
-    private double hqDist = 0.0;
-    private double hqAngle = 0.0;
 
     public double getHqDist() {
         return hqDist;
@@ -126,14 +104,6 @@ public class NervHub {
         this.hqAngle = hqAngle;
     }
 
-    // ------------------------------------------------------------ MODE
-
-    public enum appMode {
-        CaptureBall, GoHQ
-    };
-
-    private Enum<appMode> mode = NervHub.appMode.CaptureBall;
-
     public Enum<appMode> getMode() {
         return mode;
     }
@@ -142,10 +112,4 @@ public class NervHub {
         this.mode = mode;
     }
 
-    // ------------------------------------------------------------ SINGELTON
-    private final static NervHub instance = new NervHub();
-
-    public static NervHub getInstance() {
-        return instance;
-    }
 }

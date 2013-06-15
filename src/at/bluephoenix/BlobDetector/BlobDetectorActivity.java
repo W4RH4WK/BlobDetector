@@ -43,6 +43,8 @@ public class BlobDetectorActivity extends IOIOActivity implements
 
     // menu items
     private MenuItem mRun;
+    private MenuItem mRedBall;
+    private MenuItem mGreenBall;
 
     public BlobDetectorActivity() {
         Log.i(BlobDetector.TAG, "Instantiated new" + this.getClass());
@@ -84,6 +86,8 @@ public class BlobDetectorActivity extends IOIOActivity implements
     public boolean onCreateOptionsMenu(Menu menu) {
         Log.i(BlobDetector.TAG, "called onCreateOptionsMenu");
         mRun = menu.add("Gotta catch 'em all!");
+        mRedBall = menu.add("Red Ball");
+        mGreenBall = menu.add("Green Ball");
         return true;
     }
 
@@ -92,6 +96,10 @@ public class BlobDetectorActivity extends IOIOActivity implements
                 + item);
         if (item == mRun) {
             new Thread(new CaptureBall()).start();
+        } else if (item == mGreenBall) {
+            data.setTargetColor(new Scalar(103, 207, 45));
+        } else if (item == mRedBall) {
+            data.setTargetColor(new Scalar(5, 199, 131));
         }
         return true;
     }

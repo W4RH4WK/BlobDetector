@@ -8,13 +8,17 @@ import ioio.lib.util.BaseIOIOLooper;
 import java.text.DecimalFormat;
 
 class IOIOcontrol extends BaseIOIOLooper {
+    //ioio control objects
     private TwiMaster twi;
-    private NervHub data;
     private PwmOutput servo_;
 
-    // gripper help
+    private NervHub data;
+
+    // help
     private int helpGrippter = 10;
     private boolean onceFwd = false;
+    private boolean onceFwdHq = true;
+    private boolean onceRotateHq = true;
 
     @Override
     protected void setup() throws ConnectionLostException, InterruptedException {
@@ -118,7 +122,6 @@ class IOIOcontrol extends BaseIOIOLooper {
                 if (helpGrippter < 100)
                     helpGrippter += 10;
             } catch (ConnectionLostException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         else
@@ -126,7 +129,6 @@ class IOIOcontrol extends BaseIOIOLooper {
                 servo_.setDutyCycle(0.0528f + 0 * 0.0005f);
                 helpGrippter = 10;
             } catch (ConnectionLostException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
     }
@@ -209,7 +211,7 @@ class IOIOcontrol extends BaseIOIOLooper {
 
         switch (data.getMotion().getMotorState()) {
         case Forward:
-            robotMove(13);
+            robotMove(14);
             break;
         case HelpForward:
             if (onceFwd) {
@@ -218,17 +220,27 @@ class IOIOcontrol extends BaseIOIOLooper {
             }
             break;
         case Left:
-            robotMove(0, 13);
+            robotMove(0, 14);
             break;
         case Right:
-            robotMove(13, 0);
+            robotMove(14, 0);
             break;
         case Stop:
             robotMove(0);
             break;
         case ForwardHQ:
+            if (onceFwdHq) {
+                robotRotate(data.getHqAngle());
+                onceFwdHq = false;
+                onceRotateHq = true;
+            }
             break;
         case RotateHQ:
+            if (onceRotateHq) {
+                robotForward(data.getHqDist());
+                onceFwdHq = true;
+                onceRotateHq = false;
+            }
             break;
         default:
             break;
