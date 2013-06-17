@@ -17,7 +17,7 @@ public class NervHub {
      */
     private Mat image = null;
 
-    public Mat getImage() {
+    public synchronized Mat getImage() {
         return image;
     }
 
@@ -31,11 +31,11 @@ public class NervHub {
      */
     private Blob target = null;
 
-    public Blob getTarget() {
+    public synchronized Blob getTarget() {
         return target;
     }
 
-    public void setTarget(Blob target) {
+    public synchronized void setTarget(Blob target) {
         this.target = target;
     }
 
@@ -45,11 +45,11 @@ public class NervHub {
      */
     private Scalar targetColor = new Scalar(0, 100, 100);
 
-    public Scalar getTargetColor() {
+    public synchronized Scalar getTargetColor() {
         return targetColor;
     }
 
-    public void setTargetColor(Scalar targetColor) {
+    public synchronized void setTargetColor(Scalar targetColor) {
         this.targetColor = targetColor;
     }
 
@@ -59,7 +59,7 @@ public class NervHub {
      */
     private List<Blob> blobs = null;
 
-    public List<Blob> getBlobs() {
+    public synchronized List<Blob> getBlobs() {
         return blobs;
     }
 
@@ -73,7 +73,7 @@ public class NervHub {
      */
     private Mat homography = null;
 
-    public Mat getHomography() {
+    public synchronized Mat getHomography() {
         if (homography == null) {
             float values[] = new float[] { -8.61411095e-01f, -2.21361369e-02f,
                     3.63964233e+02f, -4.41004671e-02f, 1.95918664e-01f,
@@ -97,7 +97,7 @@ public class NervHub {
      */
     private Motion motion = new Motion();
 
-    public Motion getMotion() {
+    public synchronized Motion getMotion() {
         return motion;
     }
 
@@ -106,19 +106,19 @@ public class NervHub {
     private double hqDist = 0.0;
     private double hqAngle = 0.0;
 
-    public double getHqDist() {
+    public synchronized double getHqDist() {
         return hqDist;
     }
 
-    public void setHqDist(double hqDist) {
+    public synchronized void setHqDist(double hqDist) {
         this.hqDist = hqDist;
     }
 
-    public double getHqAngle() {
+    public synchronized double getHqAngle() {
         return hqAngle;
     }
 
-    public void setHqAngle(double hqAngle) {
+    public synchronized void setHqAngle(double hqAngle) {
         this.hqAngle = hqAngle;
     }
 

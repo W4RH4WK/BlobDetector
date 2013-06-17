@@ -12,27 +12,27 @@ public class Motion {
 
     private HookState hookState;
 
-    public HookState getHookState() {
+    public synchronized HookState getHookState() {
         return hookState;
     }
 
-    public void setHookState(HookState hookState) {
+    public synchronized void setHookState(HookState hookState) {
         this.hookState = hookState;
     }
 
     private MotorState motorState;
 
-    public MotorState getMotorState() {
+    public synchronized MotorState getMotorState() {
         return motorState;
     }
 
-    public void setMotorState(MotorState motorState) {
+    public synchronized void setMotorState(MotorState motorState) {
         this.motorState = motorState;
     }
 
     public Motion() {
-        this.hookState = HookState.Up;
-        this.motorState = MotorState.Stop;
+        setHookState(HookState.Up);
+        setMotorState(MotorState.Stop);
     }
 
 }
