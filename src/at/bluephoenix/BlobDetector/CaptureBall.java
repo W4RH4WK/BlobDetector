@@ -10,10 +10,10 @@ public class CaptureBall extends FiniteStateMachine {
         ScanHQ {
             public State run() {
                 NervHub data = NervHub.getInstance();
-
-                if (data.getHqDist() != 0.0)
-                    return RotateHQ;
-
+//
+//                if (data.getHqDist() != 0.0)
+//                    return RotateHQ;
+//
                 data.getMotion().setMotorState(MotorState.Right);
                 return ScanHQ;
 
@@ -41,6 +41,8 @@ public class CaptureBall extends FiniteStateMachine {
                 data.setTarget(null);
                 return End;
             }
+            
+            
         };
 
         abstract public State run();

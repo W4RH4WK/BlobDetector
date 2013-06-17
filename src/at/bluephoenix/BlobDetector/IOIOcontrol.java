@@ -1,10 +1,10 @@
 package at.bluephoenix.BlobDetector;
 
+import at.bluephoenix.BlobDetector.Utils.Motion.MotorState;
 import ioio.lib.api.PwmOutput;
 import ioio.lib.api.TwiMaster;
 import ioio.lib.api.exception.ConnectionLostException;
 import ioio.lib.util.BaseIOIOLooper;
-
 
 class IOIOcontrol extends BaseIOIOLooper {
     private TwiMaster twi;
@@ -13,9 +13,6 @@ class IOIOcontrol extends BaseIOIOLooper {
 
     // for help
     private int helpGrippter = 10;
-    private boolean onceFwd = false;
-    private boolean onceFwdHq = true;
-    private boolean onceRotateHq = true;
 
     @Override
     protected void setup() throws ConnectionLostException, InterruptedException {
@@ -119,7 +116,6 @@ class IOIOcontrol extends BaseIOIOLooper {
                 if (helpGrippter < 100)
                     helpGrippter += 10;
             } catch (ConnectionLostException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         else
@@ -127,7 +123,6 @@ class IOIOcontrol extends BaseIOIOLooper {
                 servo_.setDutyCycle(0.0528f + 0 * 0.0005f);
                 helpGrippter = 10;
             } catch (ConnectionLostException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
     }
@@ -136,57 +131,9 @@ class IOIOcontrol extends BaseIOIOLooper {
     public void loop() throws ConnectionLostException, InterruptedException {
         super.loop();
 
-        switch (data.getMotion().getHookState()) {
-        case Down:
-            robotLED(100, 0);
-            robotGripper(false);
-            break;
-        case Up:
-            robotLED(0, 100);
-            robotGripper(true);
-            onceFwd = true;
-            break;
-        default:
-            break;
-        }
-
-        switch (data.getMotion().getMotorState()) {
-        case Forward:
-            robotMove(14);
-            break;
-        case HelpForward:
-            if (onceFwd) {
-                robotForward(14);
-                onceFwd = false;
-            }
-            break;
-        case Left:
-            robotMove(0, 14);
-            break;
-        case Right:
+        if (data.getMotion().getMotorState() == MotorState.Right)
             robotMove(14, 0);
-            break;
-        case Stop:
-            robotMove(0);
-            break;
-        case ForwardHQ:
-            if (onceFwdHq) {
-                robotRotate(data.getHqAngle());
-                onceFwdHq = false;
-                onceRotateHq = true;
-            }
-            break;
-        case RotateHQ:
-            if (onceRotateHq) {
-                robotForward(data.getHqDist());
-                onceFwdHq = true;
-                onceRotateHq = false;
-            }
-            break;
-        default:
-            break;
-        }
-
+        
     }
 
     @Override

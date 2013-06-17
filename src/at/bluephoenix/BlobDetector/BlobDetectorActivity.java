@@ -94,9 +94,10 @@ public class BlobDetectorActivity extends IOIOActivity implements
         Log.i(BlobDetector.TAG, "called onOptionsItemSelected; selected item: "
                 + item);
         if (item == mRun) {
-            new Thread(new CaptureBall()).start();
+            ;
         } else if (item == mBeaconMode) {
             displayBeacon = !displayBeacon;
+            new Thread(new CaptureBall()).start();
         }
 
         return true;
@@ -279,11 +280,16 @@ public class BlobDetectorActivity extends IOIOActivity implements
                     data.setHqAngle(BlobDetector.calcAbsAngle(pos, hq)
                             - BlobDetector.calcAbsViewAngle(pos, left));
                 }
-                Core.putText(frame, data.getHqDist() + " <" + data.getHqDist(),
-                        new Point(20, 80), Core.FONT_HERSHEY_PLAIN, 1,
-                        new Scalar(255, 0, 0));
 
             }
+
+            Core.putText(frame, "Motor: "
+                    + data.getMotion().getMotorState().toString(), new Point(
+                    20, 105), Core.FONT_HERSHEY_PLAIN, 1, new Scalar(255, 0, 0));
+
+            Core.putText(frame, data.getHqDist() + " <" + data.getHqDist(),
+                    new Point(20, 80), Core.FONT_HERSHEY_PLAIN, 1, new Scalar(
+                            255, 0, 0));
 
         }
 
