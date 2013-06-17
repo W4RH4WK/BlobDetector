@@ -35,4 +35,11 @@ public class Motion {
         setMotorState(MotorState.Stop);
     }
 
+    // ------------------------------------------------------------ SINGELTON
+    private final static Motion instance = new Motion();
+
+    public static Motion getInstance() {
+        return instance;
+    }
+
 }

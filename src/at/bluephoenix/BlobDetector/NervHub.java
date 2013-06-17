@@ -95,9 +95,12 @@ public class NervHub {
     /**
      * this object determines the robots desired motion.
      */
-    private Motion motion = new Motion();
+    private Motion motion = null;
 
     public synchronized Motion getMotion() {
+        if (motion == null)
+            motion = Motion.getInstance();
+
         return motion;
     }
 
