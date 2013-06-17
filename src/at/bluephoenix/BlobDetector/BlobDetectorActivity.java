@@ -28,8 +28,6 @@ import android.view.View.OnTouchListener;
 import android.view.WindowManager;
 import at.bluephoenix.BlobDetector.Utils.Beacon;
 import at.bluephoenix.BlobDetector.Utils.Blob;
-import at.bluephoenix.BlobDetector.Utils.Motion;
-import at.bluephoenix.BlobDetector.Utils.Motion.MotorState;
 
 /**
  * This class holds android activities as well as the camera handling
@@ -188,10 +186,15 @@ public class BlobDetectorActivity extends IOIOActivity implements
             Core.putText(frame, "Becon mode", new Point(20, 30),
                     Core.FONT_HERSHEY_PLAIN, 1, new Scalar(255, 0, 0));
 
-            // color values
-            Scalar red = new Scalar(5, 199, 131);
-            Scalar blue = new Scalar(151, 255, 116);
-            Scalar green = new Scalar(103, 207, 45);
+            // color values IIS
+            // Scalar red = new Scalar(5, 199, 131);
+            // Scalar blue = new Scalar(151, 255, 116);
+            // Scalar green = new Scalar(103, 207, 45);
+
+            // home
+            Scalar red = new Scalar(9, 203, 117);
+            Scalar blue = new Scalar(153, 176, 63);
+            Scalar green = new Scalar(80, 82, 36);
 
             // get blobs
             List<Blob> redBlobs = BlobDetector.findBlobs(frame, red);
@@ -247,10 +250,9 @@ public class BlobDetectorActivity extends IOIOActivity implements
                 greenRed.drawTo(frame);
                 greenRed.setAbsCoords(new Point(150, 150));
             }
-            
+
             // calc way to hq only once
-            if (beacons.size() >= 2
-                    && data.getMotion().getMotorState() != Motion.MotorState.Return) {
+            if (beacons.size() >= 2) {
                 Beacon left = beacons.get(0);
                 Beacon right = beacons.get(1);
                 if (left.getAngle() > right.getAngle()) {
@@ -273,11 +275,11 @@ public class BlobDetectorActivity extends IOIOActivity implements
                     Point hq = new Point(13, 37);
                     data.setHqDist(Math.sqrt(Math.pow(pos.x - hq.x, 2)
                             + Math.pow(pos.y - hq.y, 2)));
-                    data.setHqAngle(BlobDetector.calcAbsAngle(pos, hq));
-                    data.getMotion().setMotorState(MotorState.Return);
+
+                    data.setHqAngle(BlobDetector.calcAbsAngle(pos, hq)
+                            - BlobDetector.calcAbsViewAngle(pos, left));
                 }
-                Core.putText(frame,
-                        data.getHqDist() + " <" + data.getHqDist(),
+                Core.putText(frame, data.getHqDist() + " <" + data.getHqDist(),
                         new Point(20, 80), Core.FONT_HERSHEY_PLAIN, 1,
                         new Scalar(255, 0, 0));
 

@@ -5,28 +5,17 @@ import ioio.lib.api.TwiMaster;
 import ioio.lib.api.exception.ConnectionLostException;
 import ioio.lib.util.BaseIOIOLooper;
 
-import java.text.DecimalFormat;
-
-import at.bluephoenix.BlobDetector.Utils.Motion.MotorState;
 
 class IOIOcontrol extends BaseIOIOLooper {
     private TwiMaster twi;
     private NervHub data;
     private PwmOutput servo_;
 
-    // looper sensor info
-    private String analog[] = new String[9];
-    @SuppressWarnings("unused")
-    private short xPos;
-    @SuppressWarnings("unused")
-    private short yPos;
-    @SuppressWarnings("unused")
-    private short anglePos;
-
     // for help
     private int helpGrippter = 10;
     private boolean onceFwd = false;
-    private boolean onceHq = false;
+    private boolean onceFwdHq = true;
+    private boolean onceRotateHq = true;
 
     @Override
     protected void setup() throws ConnectionLostException, InterruptedException {
@@ -143,59 +132,6 @@ class IOIOcontrol extends BaseIOIOLooper {
             }
     }
 
-    protected void robotReadSensor() {
-        byte[] request = new byte[] { 0x10 };
-        byte[] response = new byte[8];
-        synchronized (twi) {
-            try {
-                twi.writeRead(0x69, false, request, request.length, response,
-                        response.length);
-            } catch (ConnectionLostException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
-        for (int l = 0; l < 7; l++) {
-            int i = 0xFF & response[l + 1];
-            if (l != 0)
-                analog[l] = i + "cm";
-            else
-                analog[l] = new DecimalFormat("#.#").format(i / 10.0) + "V";
-        }
-
-        request[0] = 0x1A; // get velocity
-        synchronized (twi) {
-            try {
-                twi.writeRead(0x69, false, request, request.length, response, 2);
-            } catch (ConnectionLostException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        analog[7] = response[0] + "";
-        analog[8] = response[1] + "";
-
-        /* get position */
-        request[0] = 0x1B; // get position
-        synchronized (twi) {
-            try {
-                twi.writeRead(0x69, false, request, request.length, response, 6);
-            } catch (ConnectionLostException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
-        xPos = (short) (((response[1] & 0xFF) << 8) | (response[0] & 0xFF));
-        yPos = (short) (((response[3] & 0xFF) << 8) | (response[2] & 0xFF));
-        anglePos = (short) (((response[5] & 0xFF) << 8) | (response[4] & 0xFF));
-
-    }
-
     @Override
     public void loop() throws ConnectionLostException, InterruptedException {
         super.loop();
@@ -216,7 +152,7 @@ class IOIOcontrol extends BaseIOIOLooper {
 
         switch (data.getMotion().getMotorState()) {
         case Forward:
-            robotMove(13);
+            robotMove(14);
             break;
         case HelpForward:
             if (onceFwd) {
@@ -224,24 +160,27 @@ class IOIOcontrol extends BaseIOIOLooper {
                 onceFwd = false;
             }
             break;
-        case Backward:
-            robotMove(-13);
-            break;
         case Left:
-            robotMove(0, 13);
+            robotMove(0, 14);
             break;
         case Right:
-            robotMove(13, 0);
+            robotMove(14, 0);
             break;
         case Stop:
             robotMove(0);
             break;
-        case Return:
-            if (onceHq) {
-                // robotRotate(data.getHqAngle());
+        case ForwardHQ:
+            if (onceFwdHq) {
+                robotRotate(data.getHqAngle());
+                onceFwdHq = false;
+                onceRotateHq = true;
+            }
+            break;
+        case RotateHQ:
+            if (onceRotateHq) {
                 robotForward(data.getHqDist());
-                onceHq = false;
-                data.getMotion().setMotorState(MotorState.Stop);
+                onceFwdHq = true;
+                onceRotateHq = false;
             }
             break;
         default:

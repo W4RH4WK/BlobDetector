@@ -1,99 +1,35 @@
 package at.bluephoenix.BlobDetector;
 
 import android.util.Log;
-import at.bluephoenix.BlobDetector.Utils.Blob;
 import at.bluephoenix.BlobDetector.Utils.FiniteStateMachine;
 import at.bluephoenix.BlobDetector.Utils.Motion.HookState;
 import at.bluephoenix.BlobDetector.Utils.Motion.MotorState;
 
 public class CaptureBall extends FiniteStateMachine {
     private enum State {
-        Scan {
-            public State run() {
-                NervHub data = NervHub.getInstance();
-                Blob b = null;
-
-                try {
-                    b = data.getBlobs().get(0);
-                } catch (IndexOutOfBoundsException e) {
-                    return ScanRotate;
-                }
-
-                // check for minimum area
-                if (b.getArea() >= 1000) {
-                    data.setTarget(b);
-                    return Rotate;
-                } else {
-                    return ScanRotate;
-                }
-            }
-        },
-        ScanRotate {
-            public State run() {
-                NervHub.getInstance().getMotion()
-                        .setMotorState(MotorState.Left);
-                return Scan;
-            }
-        },
-        Rotate {
+        ScanHQ {
             public State run() {
                 NervHub data = NervHub.getInstance();
 
-                Double targetAngle = data.getTarget().getAngle();
+                if (data.getHqDist() != 0.0)
+                    return RotateHQ;
 
-                Log.i(BlobDetector.TAG, "Cb: target angle " + targetAngle);
+                data.getMotion().setMotorState(MotorState.Right);
+                return ScanHQ;
 
-                if (targetAngle < -8) {
-                    data.getMotion().setMotorState(MotorState.Left);
-                    return Scan;
-                } else if (targetAngle > 8) {
-                    data.getMotion().setMotorState(MotorState.Right);
-                    return Scan;
-                }
-
-                return Advance;
             }
         },
-        Advance {
+        RotateHQ {
             public State run() {
                 NervHub data = NervHub.getInstance();
-
-                Double targetDist = data.getTarget().getDistance();
-
-                Log.i(BlobDetector.TAG, "Cb: target distance" + targetDist);
-
-                if (targetDist > 22) {
-                    data.getMotion().setMotorState(MotorState.Forward);
-                    return Scan;
-                } else {
-                    data.getMotion().setMotorState(MotorState.Stop);
-                    return HelpAdvance;
-                }
+                data.getMotion().setMotorState(MotorState.RotateHQ);
+                return ForwardHQ;
             }
         },
-        HelpAdvance {
-            public State run() {
-                NervHub.getInstance().getMotion()
-                        .setMotorState(MotorState.HelpForward);
-                return Capture;
-            }
-        },
-        Capture {
+        ForwardHQ {
             public State run() {
                 NervHub data = NervHub.getInstance();
-                data.getMotion().setHookState(HookState.Down);
-                return GoHome; // now go home
-            }
-        },
-        GoHome {
-            /*
-             * 1. Find 2 Beacons
-             * 
-             * 2. Calc coordinates
-             * 
-             * 3. go home
-             */
-            public State run() {
+                data.getMotion().setMotorState(MotorState.ForwardHQ);
                 return End;
             }
         },
@@ -110,7 +46,7 @@ public class CaptureBall extends FiniteStateMachine {
         abstract public State run();
     }
 
-    private State state = State.Scan;
+    private State state = State.ScanHQ;
 
     @Override
     public void exec() {
