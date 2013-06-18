@@ -7,7 +7,6 @@ import org.opencv.core.Mat;
 import org.opencv.core.Scalar;
 
 import at.bluephoenix.BlobDetector.Utils.Blob;
-import at.bluephoenix.BlobDetector.Utils.Motion;
 
 public class NervHub {
 
@@ -89,19 +88,6 @@ public class NervHub {
 
     public synchronized void setHomography(Mat homography) {
         this.homography = homography;
-    }
-
-    // ------------------------------------------------------------ MOTION
-    /**
-     * this object determines the robots desired motion.
-     */
-    private Motion motion = null;
-
-    public synchronized Motion getMotion() {
-        if (motion == null)
-            motion = Motion.getInstance();
-
-        return motion;
     }
 
     // ------------------------------------------------------------ go hq

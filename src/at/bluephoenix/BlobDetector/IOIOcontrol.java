@@ -1,6 +1,7 @@
 package at.bluephoenix.BlobDetector;
 
-import at.bluephoenix.BlobDetector.Utils.Motion.MotorState;
+import java.text.DecimalFormat;
+
 import ioio.lib.api.PwmOutput;
 import ioio.lib.api.TwiMaster;
 import ioio.lib.api.exception.ConnectionLostException;
@@ -127,13 +128,98 @@ class IOIOcontrol extends BaseIOIOLooper {
             }
     }
 
+    protected String[] robotReadSensor() {
+        byte[] request = new byte[] { 0x10 };
+        byte[] response = new byte[8];
+        String analog[] = new String[12];
+
+        synchronized (twi) {
+            try {
+                twi.writeRead(0x69, false, request, request.length, response,
+                        response.length);
+            } catch (ConnectionLostException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        for (int l = 0; l < 7; l++) {
+            int i = 0xFF & response[l + 1];
+            if (l != 0)
+                analog[l] = i + "cm";
+            else
+                analog[l] = new DecimalFormat("#.#").format(i / 10.0) + "V";
+        }
+
+        request[0] = 0x1A; // get velocity
+        synchronized (twi) {
+            try {
+                twi.writeRead(0x69, false, request, request.length, response, 2);
+            } catch (ConnectionLostException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        analog[7] = response[0] + "";
+        analog[8] = response[1] + "";
+
+        /* get position */
+        request[0] = 0x1B; // get position
+        synchronized (twi) {
+            try {
+                twi.writeRead(0x69, false, request, request.length, response, 6);
+            } catch (ConnectionLostException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        analog[9] = (short) (((response[1] & 0xFF) << 8) | (response[0] & 0xFF))
+                + "";
+        analog[10] = (short) (((response[3] & 0xFF) << 8) | (response[2] & 0xFF))
+                + "";
+        analog[11] = (short) (((response[5] & 0xFF) << 8) | (response[4] & 0xFF))
+                + "";
+        return analog;
+    }
+
+    // help
+    private int step = 0;
+    private double grad;
+
     @Override
     public void loop() throws ConnectionLostException, InterruptedException {
-        super.loop();
 
-        if (data.getMotion().getMotorState() == MotorState.Right)
+        // search for beacon
+        if (step == 0) {
             robotMove(14, 0);
-        
+            if (data.getHqAngle() != 0.0) // found beacon? go on
+                step++;
+        }
+
+        // get right angle to Beacon
+        if (step == 1) {
+            robotMove(0, 14);
+            grad = Double.parseDouble(robotReadSensor()[3]);
+            step++;
+        }
+
+        if (step == 2)
+            if (grad - Double.parseDouble(robotReadSensor()[3]) < data
+                    .getHqAngle())
+                step++;
+
+        // go to beacon
+        if (step == 3) {
+            robotForward(data.getHqDist());
+            step++;
+        }
+
+        if (step == 4)
+            robotLED(100);
     }
 
     @Override

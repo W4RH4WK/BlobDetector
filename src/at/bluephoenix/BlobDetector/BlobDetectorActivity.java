@@ -43,7 +43,6 @@ public class BlobDetectorActivity extends IOIOActivity implements
 
     // menu items
     private MenuItem mRun;
-    private MenuItem mBeaconMode;
     private boolean displayBeacon = false;
 
     public BlobDetectorActivity() {
@@ -85,20 +84,15 @@ public class BlobDetectorActivity extends IOIOActivity implements
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         Log.i(BlobDetector.TAG, "called onCreateOptionsMenu");
-        mRun = menu.add("Catch them all");
-        mBeaconMode = menu.add("Beacon mode");
+        mRun = menu.add("Go home");
         return true;
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
         Log.i(BlobDetector.TAG, "called onOptionsItemSelected; selected item: "
                 + item);
-        if (item == mRun) {
-            ;
-        } else if (item == mBeaconMode) {
+        if (item == mRun)
             displayBeacon = !displayBeacon;
-            new Thread(new CaptureBall()).start();
-        }
 
         return true;
     }
@@ -179,10 +173,6 @@ public class BlobDetectorActivity extends IOIOActivity implements
                 data.setTarget(null);
             }
 
-            // motor state info
-            Core.putText(frame, "Motor: "
-                    + data.getMotion().getMotorState().toString(), new Point(
-                    20, 105), Core.FONT_HERSHEY_PLAIN, 1, new Scalar(255, 0, 0));
         } else {
             Core.putText(frame, "Becon mode", new Point(20, 30),
                     Core.FONT_HERSHEY_PLAIN, 1, new Scalar(255, 0, 0));
@@ -282,10 +272,6 @@ public class BlobDetectorActivity extends IOIOActivity implements
                 }
 
             }
-
-            Core.putText(frame, "Motor: "
-                    + data.getMotion().getMotorState().toString(), new Point(
-                    20, 105), Core.FONT_HERSHEY_PLAIN, 1, new Scalar(255, 0, 0));
 
             Core.putText(frame, data.getHqDist() + " <" + data.getHqDist(),
                     new Point(20, 80), Core.FONT_HERSHEY_PLAIN, 1, new Scalar(
