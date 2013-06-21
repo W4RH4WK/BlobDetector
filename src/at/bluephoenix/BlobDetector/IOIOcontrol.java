@@ -2,6 +2,8 @@ package at.bluephoenix.BlobDetector;
 
 import java.text.DecimalFormat;
 
+import at.bluephoenix.BlobDetector.Utils.Blob;
+
 import ioio.lib.api.PwmOutput;
 import ioio.lib.api.TwiMaster;
 import ioio.lib.api.exception.ConnectionLostException;
@@ -12,8 +14,17 @@ class IOIOcontrol extends BaseIOIOLooper {
     private NervHub data;
     private PwmOutput servo_;
 
+    private enum Robot {
+        Scan, ScanRotate, Rotate, Advance, HelpAdvance, Capture, ScanHQ, RotateHQ, ForwardHQ, End
+    }
+
+    private Robot robot = Robot.End;
+
     // for help
     private int helpGrippter = 10;
+    private boolean onceFwd = false;
+    private boolean onceFwdHq = true;
+    private boolean onceRotateHq = true;
 
     @Override
     protected void setup() throws ConnectionLostException, InterruptedException {
@@ -186,40 +197,108 @@ class IOIOcontrol extends BaseIOIOLooper {
         return analog;
     }
 
-    // help
-    private int step = 0;
-    private double grad;
-
     @Override
     public void loop() throws ConnectionLostException, InterruptedException {
 
-        // search for beacon
-        if (step == 0) {
-            robotMove(14, 0);
-            if (data.getHqAngle() != 0.0) // found beacon? go on
-                step++;
-        }
+        switch (robot) {
+        case Scan:
+            Blob b = null;
 
-        // get right angle to Beacon
-        if (step == 1) {
+            try {
+                b = data.getBlobs().get(0);
+            } catch (IndexOutOfBoundsException e) {
+                this.robot = Robot.ScanRotate;
+            }
+
+            // check for minimum area
+            if (b.getArea() >= 1000) {
+                data.setTarget(b);
+                this.robot = Robot.Rotate;
+            } else {
+                this.robot = Robot.ScanRotate;
+            }
+
+            break;
+        case ScanRotate:
             robotMove(0, 14);
-            grad = Double.parseDouble(robotReadSensor()[3]);
-            step++;
+            this.robot = Robot.Scan;
+            break;
+        case Rotate:
+            Double targetAngle = data.getTarget().getAngle();
+
+            if (targetAngle < -8) {
+                robotMove(0, 14);
+                this.robot = Robot.Scan;
+            } else if (targetAngle > 8) {
+                robotMove(14, 0);
+                this.robot = Robot.Scan;
+            }
+            this.robot = Robot.Advance;
+            
+            break;
+        case Advance:
+            if (data.getTarget().getDistance() > 22) {
+                robotMove(14);
+                this.robot = Robot.Scan;
+            } else {
+                robotMove(0);
+                this.robot = Robot.HelpAdvance;
+            }
+            
+            break;
+        case HelpAdvance:
+            if (onceFwd) {
+                robotForward(14);
+                onceFwd = false;
+            }
+            
+            break;
+        case Capture:
+
+            robotLED(100, 0);
+            robotGripper(false);
+            // data.setMode(NervHub.appMode.GoHQ);
+            this.robot = Robot.ScanHQ;
+            
+            break;
+        case ScanHQ:
+            if (data.getHqDist() != 0.0) {
+                robotMove(14, 0);
+                this.robot = Robot.Scan;
+            } else
+                this.robot = Robot.RotateHQ;
+            
+            break;
+        case RotateHQ:
+            if (onceRotateHq) {
+                robotForward(data.getHqDist());
+                onceFwdHq = true;
+                onceRotateHq = false;
+            }
+
+            this.robot = Robot.ForwardHQ;
+
+            break;
+        case ForwardHQ:
+            if (onceFwdHq) {
+                robotRotate(data.getHqAngle());
+                onceFwdHq = false;
+                onceRotateHq = true;
+            }
+            this.robot = Robot.End;
+
+            break;
+        case End:
+            robotMove(0);
+            robotLED(0, 100);
+            robotGripper(true);
+            onceFwd = true;
+            this.robot = Robot.End;
+
+            break;
+        default:
+            break;
         }
-
-        if (step == 2)
-            if (grad - Double.parseDouble(robotReadSensor()[3]) < data
-                    .getHqAngle())
-                step++;
-
-        // go to beacon
-        if (step == 3) {
-            robotForward(data.getHqDist());
-            step++;
-        }
-
-        if (step == 4)
-            robotLED(100);
     }
 
     @Override
