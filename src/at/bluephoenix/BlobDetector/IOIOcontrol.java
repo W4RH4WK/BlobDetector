@@ -11,8 +11,8 @@ import ioio.lib.util.BaseIOIOLooper;
 
 class IOIOcontrol extends BaseIOIOLooper {
     private TwiMaster twi;
-    private NervHub data;
     private PwmOutput servo_;
+    private NervHub data;
 
     private enum Robot {
         Scan, ScanRotate, Rotate, Advance, HelpAdvance, Capture, ScanHQ, RotateHQ, ForwardHQ, End
@@ -23,7 +23,7 @@ class IOIOcontrol extends BaseIOIOLooper {
     // for help
     private int helpGrippter = 10;
     private boolean onceFwd = false;
-    private boolean onceFwdHq = true;
+    private boolean onceFwdHq = false;
     private boolean onceRotateHq = true;
 
     @Override
@@ -31,8 +31,8 @@ class IOIOcontrol extends BaseIOIOLooper {
         super.setup();
         twi = ioio_.openTwiMaster(1, TwiMaster.Rate.RATE_100KHz, false);
         servo_ = ioio_.openPwmOutput(10, 50);
-        data = NervHub.getInstance();
         servo_.setDutyCycle(0.0001f);
+        data = NervHub.getInstance();
     }
 
     protected void robotForward(int fwd) {
@@ -262,15 +262,17 @@ class IOIOcontrol extends BaseIOIOLooper {
 
             break;
         case ScanHQ:
-
-            if (data.getHqDist() != 0.0)
+            robotLED(0, 100);
+            if (data.getHqDist() != 1000.0) {
                 this.robot = Robot.RotateHQ;
-
+                break;
+            }
             robotMove(14, 0);
-            this.robot = Robot.ScanHQ;
+            this.robot = Robot.RotateHQ;
 
             break;
         case RotateHQ:
+            robotLED(0, 100);
             if (onceRotateHq) {
                 robotForward(data.getHqDist());
                 onceFwdHq = true;

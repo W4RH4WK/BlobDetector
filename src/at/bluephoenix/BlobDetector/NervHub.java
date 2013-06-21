@@ -6,9 +6,10 @@ import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Scalar;
 
+import android.app.Application;
 import at.bluephoenix.BlobDetector.Utils.Blob;
 
-public class NervHub {
+public class NervHub extends Application {
 
     public enum appMode {
         CaptureBall, GoHQ
@@ -19,13 +20,16 @@ public class NervHub {
     private volatile Scalar targetColor = new Scalar(0, 100, 100);
     private volatile List<Blob> blobs = null;
     private volatile Mat homography = null;
-    private volatile double hqDist = 0.0;
+    private volatile double hqDist = 1000.0;
     private volatile double hqAngle = 0.0;
     private volatile appMode mode = NervHub.appMode.GoHQ;
-    private final static NervHub instance = new NervHub();
 
-    public synchronized static NervHub getInstance() {
-        return instance;
+    private static class NervHubHolder {
+        private final static NervHub INSTACE = new NervHub();
+    }
+
+    public static NervHub getInstance() {
+        return NervHubHolder.INSTACE;
     }
 
     public synchronized Mat getImage() {

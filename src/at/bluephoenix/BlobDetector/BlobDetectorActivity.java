@@ -264,17 +264,14 @@ public class BlobDetectorActivity extends IOIOActivity implements
                         new Point(20, 55), Core.FONT_HERSHEY_PLAIN, 1,
                         new Scalar(255, 0, 0));
 
-                if (data.getHqDist() == 0.0) {
-                    Point hq = new Point(13, 37);
-                    data.setHqDist(Math.sqrt(Math.pow(pos.x - hq.x, 2)
-                            + Math.pow(pos.y - hq.y, 2)));
+                Point hq = new Point(13, 37);
+                data.setHqDist(Math.sqrt(Math.pow(pos.x - hq.x, 2)
+                        + Math.pow(pos.y - hq.y, 2)));
 
-                    data.setHqAngle(BlobDetector.calcAbsAngle(pos, hq)
-                            - BlobDetector.calcAbsViewAngle(pos, left));
-                }
+                data.setHqAngle(BlobDetector.calcAbsAngle(pos, hq)
+                        - BlobDetector.calcAbsViewAngle(pos, left));
 
             }
-
             Core.putText(frame, data.getHqDist() + " <" + data.getHqDist(),
                     new Point(20, 80), Core.FONT_HERSHEY_PLAIN, 1, new Scalar(
                             255, 0, 0));
