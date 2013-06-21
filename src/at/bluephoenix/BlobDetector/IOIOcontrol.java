@@ -234,7 +234,7 @@ class IOIOcontrol extends BaseIOIOLooper {
                 this.robot = Robot.Scan;
             }
             this.robot = Robot.Advance;
-            
+
             break;
         case Advance:
             if (data.getTarget().getDistance() > 22) {
@@ -244,22 +244,22 @@ class IOIOcontrol extends BaseIOIOLooper {
                 robotMove(0);
                 this.robot = Robot.HelpAdvance;
             }
-            
+
             break;
         case HelpAdvance:
             if (onceFwd) {
                 robotForward(14);
                 onceFwd = false;
             }
-            
+
             break;
         case Capture:
 
             robotLED(100, 0);
             robotGripper(false);
-            // data.setMode(NervHub.appMode.GoHQ);
+            data.setMode(NervHub.appMode.GoHQ);
             this.robot = Robot.ScanHQ;
-            
+
             break;
         case ScanHQ:
             if (data.getHqDist() != 0.0) {
@@ -267,7 +267,7 @@ class IOIOcontrol extends BaseIOIOLooper {
                 this.robot = Robot.Scan;
             } else
                 this.robot = Robot.RotateHQ;
-            
+
             break;
         case RotateHQ:
             if (onceRotateHq) {

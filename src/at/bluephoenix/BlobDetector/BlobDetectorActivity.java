@@ -26,6 +26,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.WindowManager;
+import at.bluephoenix.BlobDetector.NervHub.appMode;
 import at.bluephoenix.BlobDetector.Utils.Beacon;
 import at.bluephoenix.BlobDetector.Utils.Blob;
 
@@ -43,7 +44,6 @@ public class BlobDetectorActivity extends IOIOActivity implements
 
     // menu items
     private MenuItem mRun;
-    private boolean displayBeacon = false;
 
     public BlobDetectorActivity() {
         Log.i(BlobDetector.TAG, "Instantiated new" + this.getClass());
@@ -92,8 +92,7 @@ public class BlobDetectorActivity extends IOIOActivity implements
         Log.i(BlobDetector.TAG, "called onOptionsItemSelected; selected item: "
                 + item);
         if (item == mRun)
-            displayBeacon = !displayBeacon;
-
+            ;
         return true;
     }
 
@@ -132,7 +131,7 @@ public class BlobDetectorActivity extends IOIOActivity implements
 
         Mat frame = inputFrame.rgba().clone();
 
-        if (!displayBeacon) {
+        if (data.getMode() == appMode.CaptureBall) {
             Core.putText(frame, "Catch ball mode", new Point(20, 30),
                     Core.FONT_HERSHEY_PLAIN, 1, new Scalar(255, 0, 0));
 
@@ -173,7 +172,7 @@ public class BlobDetectorActivity extends IOIOActivity implements
                 data.setTarget(null);
             }
 
-        } else {
+        } else if (data.getMode() == appMode.GoHQ) {
             Core.putText(frame, "Becon mode", new Point(20, 30),
                     Core.FONT_HERSHEY_PLAIN, 1, new Scalar(255, 0, 0));
 
@@ -277,6 +276,9 @@ public class BlobDetectorActivity extends IOIOActivity implements
                     new Point(20, 80), Core.FONT_HERSHEY_PLAIN, 1, new Scalar(
                             255, 0, 0));
 
+        } else {
+            Core.putText(frame, "Error, wrong mode", new Point(20, 30),
+                    Core.FONT_HERSHEY_PLAIN, 1, new Scalar(255, 0, 0));
         }
 
         return frame;

@@ -10,13 +10,25 @@ import at.bluephoenix.BlobDetector.Utils.Blob;
 
 public class NervHub {
 
-    // ------------------------------------------------------------ IMAGE
-    /**
-     * this member holds the current rgba image matrix.
-     */
-    private Mat image = null;
+    public enum appMode {
+        CaptureBall, GoHQ
+    };
 
-    public synchronized Mat getImage() {
+    private Mat image = null;
+    private Blob target = null;
+    private Scalar targetColor = new Scalar(0, 100, 100);
+    private List<Blob> blobs = null;
+    private Mat homography = null;
+    private double hqDist = 0.0;
+    private double hqAngle = 0.0;
+    private appMode mode = NervHub.appMode.CaptureBall;
+    private final static NervHub instance = new NervHub();
+
+    public static NervHub getInstance() {
+        return instance;
+    }
+
+    public Mat getImage() {
         return image;
     }
 
@@ -24,41 +36,23 @@ public class NervHub {
         this.image = image;
     }
 
-    // ------------------------------------------------------------ TARGET
-    /**
-     * this member holds the current target.
-     */
-    private Blob target = null;
-
-    public synchronized Blob getTarget() {
+    public Blob getTarget() {
         return target;
     }
 
-    public synchronized void setTarget(Blob target) {
+    public void setTarget(Blob target) {
         this.target = target;
     }
 
-    // ------------------------------------------------------------ TARGET COLOR
-    /**
-     * this member holds the color we look for.
-     */
-    private Scalar targetColor = new Scalar(0, 100, 100);
-
-    public synchronized Scalar getTargetColor() {
+    public Scalar getTargetColor() {
         return targetColor;
     }
 
-    public synchronized void setTargetColor(Scalar targetColor) {
+    public void setTargetColor(Scalar targetColor) {
         this.targetColor = targetColor;
     }
 
-    // ------------------------------------------------------------ BLOBS
-    /**
-     * this list contains all found blobs sorted from biggest to smallest.
-     */
-    private List<Blob> blobs = null;
-
-    public synchronized List<Blob> getBlobs() {
+    public List<Blob> getBlobs() {
         return blobs;
     }
 
@@ -66,13 +60,7 @@ public class NervHub {
         this.blobs = blobs;
     }
 
-    // ------------------------------------------------------------ HOMOGRAPHY
-    /**
-     * this member contains the homography matrix.
-     */
-    private Mat homography = null;
-
-    public synchronized Mat getHomography() {
+    public Mat getHomography() {
         if (homography == null) {
             float values[] = new float[] { -8.61411095e-01f, -2.21361369e-02f,
                     3.63964233e+02f, -4.41004671e-02f, 1.95918664e-01f,
@@ -90,31 +78,28 @@ public class NervHub {
         this.homography = homography;
     }
 
-    // ------------------------------------------------------------ go hq
-
-    private double hqDist = 0.0;
-    private double hqAngle = 0.0;
-
-    public synchronized double getHqDist() {
+    public double getHqDist() {
         return hqDist;
     }
 
-    public synchronized void setHqDist(double hqDist) {
+    public void setHqDist(double hqDist) {
         this.hqDist = hqDist;
     }
 
-    public synchronized double getHqAngle() {
+    public double getHqAngle() {
         return hqAngle;
     }
 
-    public synchronized void setHqAngle(double hqAngle) {
+    public void setHqAngle(double hqAngle) {
         this.hqAngle = hqAngle;
     }
 
-    // ------------------------------------------------------------ SINGELTON
-    private final static NervHub instance = new NervHub();
-
-    public static NervHub getInstance() {
-        return instance;
+    public appMode getMode() {
+        return mode;
     }
+
+    public void setMode(appMode mode) {
+        this.mode = mode;
+    }
+
 }
