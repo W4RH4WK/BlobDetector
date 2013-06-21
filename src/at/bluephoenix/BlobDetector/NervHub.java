@@ -21,7 +21,7 @@ public class NervHub {
     private Mat homography = null;
     private double hqDist = 0.0;
     private double hqAngle = 0.0;
-    private appMode mode = NervHub.appMode.CaptureBall;
+    private appMode mode = NervHub.appMode.GoHQ;
     private final static NervHub instance = new NervHub();
 
     public static NervHub getInstance() {

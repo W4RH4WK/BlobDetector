@@ -18,7 +18,7 @@ class IOIOcontrol extends BaseIOIOLooper {
         Scan, ScanRotate, Rotate, Advance, HelpAdvance, Capture, ScanHQ, RotateHQ, ForwardHQ, End
     }
 
-    private Robot robot = Robot.End;
+    private Robot robot = Robot.ScanHQ;
 
     // for help
     private int helpGrippter = 10;
