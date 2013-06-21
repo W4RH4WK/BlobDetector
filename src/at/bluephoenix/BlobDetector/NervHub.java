@@ -14,21 +14,21 @@ public class NervHub {
         CaptureBall, GoHQ
     };
 
-    private Mat image = null;
-    private Blob target = null;
-    private Scalar targetColor = new Scalar(0, 100, 100);
-    private List<Blob> blobs = null;
-    private Mat homography = null;
-    private double hqDist = 0.0;
-    private double hqAngle = 0.0;
-    private appMode mode = NervHub.appMode.GoHQ;
+    private volatile Mat image = null;
+    private volatile Blob target = null;
+    private volatile Scalar targetColor = new Scalar(0, 100, 100);
+    private volatile List<Blob> blobs = null;
+    private volatile Mat homography = null;
+    private volatile double hqDist = 0.0;
+    private volatile double hqAngle = 0.0;
+    private volatile appMode mode = NervHub.appMode.GoHQ;
     private final static NervHub instance = new NervHub();
 
-    public static NervHub getInstance() {
+    public synchronized static NervHub getInstance() {
         return instance;
     }
 
-    public Mat getImage() {
+    public synchronized Mat getImage() {
         return image;
     }
 
@@ -36,23 +36,23 @@ public class NervHub {
         this.image = image;
     }
 
-    public Blob getTarget() {
+    public synchronized Blob getTarget() {
         return target;
     }
 
-    public void setTarget(Blob target) {
+    public synchronized void setTarget(Blob target) {
         this.target = target;
     }
 
-    public Scalar getTargetColor() {
+    public synchronized Scalar getTargetColor() {
         return targetColor;
     }
 
-    public void setTargetColor(Scalar targetColor) {
+    public synchronized void setTargetColor(Scalar targetColor) {
         this.targetColor = targetColor;
     }
 
-    public List<Blob> getBlobs() {
+    public synchronized List<Blob> getBlobs() {
         return blobs;
     }
 
@@ -60,7 +60,7 @@ public class NervHub {
         this.blobs = blobs;
     }
 
-    public Mat getHomography() {
+    public synchronized Mat getHomography() {
         if (homography == null) {
             float values[] = new float[] { -8.61411095e-01f, -2.21361369e-02f,
                     3.63964233e+02f, -4.41004671e-02f, 1.95918664e-01f,
@@ -78,27 +78,27 @@ public class NervHub {
         this.homography = homography;
     }
 
-    public double getHqDist() {
+    public synchronized double getHqDist() {
         return hqDist;
     }
 
-    public void setHqDist(double hqDist) {
+    public synchronized void setHqDist(double hqDist) {
         this.hqDist = hqDist;
     }
 
-    public double getHqAngle() {
+    public synchronized double getHqAngle() {
         return hqAngle;
     }
 
-    public void setHqAngle(double hqAngle) {
+    public synchronized void setHqAngle(double hqAngle) {
         this.hqAngle = hqAngle;
     }
 
-    public appMode getMode() {
+    public synchronized appMode getMode() {
         return mode;
     }
 
-    public void setMode(appMode mode) {
+    public synchronized void setMode(appMode mode) {
         this.mode = mode;
     }
 

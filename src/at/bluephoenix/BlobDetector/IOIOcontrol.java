@@ -262,11 +262,12 @@ class IOIOcontrol extends BaseIOIOLooper {
 
             break;
         case ScanHQ:
-            if (data.getHqDist() != 0.0) {
-                robotMove(14, 0);
-                this.robot = Robot.Scan;
-            } else
+
+            if (data.getHqDist() != 0.0)
                 this.robot = Robot.RotateHQ;
+
+            robotMove(14, 0);
+            this.robot = Robot.ScanHQ;
 
             break;
         case RotateHQ:

@@ -182,14 +182,17 @@ public class BlobDetectorActivity extends IOIOActivity implements
             // Scalar green = new Scalar(103, 207, 45);
 
             // home
-            Scalar red = new Scalar(9, 203, 117);
-            Scalar blue = new Scalar(153, 176, 63);
-            Scalar green = new Scalar(80, 82, 36);
+            Scalar red = new Scalar(8, 210, 30);
+            Scalar blue = new Scalar(150, 250, 70);
+            Scalar green = new Scalar(100, 200, 30);
 
             // get blobs
-            List<Blob> redBlobs = BlobDetector.findBlobs(frame, red);
-            List<Blob> blueBlobs = BlobDetector.findBlobs(frame, blue);
-            List<Blob> greenBlobs = BlobDetector.findBlobs(frame, green);
+            List<Blob> redBlobs = BlobDetector.findBlobs(frame, red,
+                    new Scalar(10, 50, 100));
+            List<Blob> blueBlobs = BlobDetector.findBlobs(frame, blue,
+                    new Scalar(10, 50, 100));
+            List<Blob> greenBlobs = BlobDetector.findBlobs(frame, green,
+                    new Scalar(10, 50, 100));
 
             // draw blobs
             for (Blob b : redBlobs)
