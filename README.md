@@ -1,4 +1,4 @@
-# Blob Detector
+# Blob Detector - [CLOSED]
 This is an example how to use OpenCV together with Android in robotics. The
 robot will try to achieve certain tasks utilising his sensors and motivity.
 
